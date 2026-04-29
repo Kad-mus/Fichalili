@@ -38,7 +38,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17px}
 
 /* ── SCREENS ── */
 .scr{display:none;height:100vh;flex-direction:column;overflow:hidden}
@@ -56,20 +56,20 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   top:-150px;right:-150px;pointer-events:none
 }
 .brand{text-align:center;margin-bottom:2.5rem}
-.brand-tag{font-family:var(--mono);font-size:10px;letter-spacing:.4em;color:var(--acc);text-transform:uppercase;margin-bottom:8px}
-.brand-name{font-size:42px;font-weight:700;letter-spacing:-.03em;color:var(--txt)}
-.brand-sub{font-size:13px;color:var(--txt3);margin-top:4px}
+.brand-tag{font-family:var(--mono);font-size:12px;letter-spacing:.4em;color:var(--acc);text-transform:uppercase;margin-bottom:8px}
+.brand-name{font-size:46px;font-weight:700;letter-spacing:-.03em;color:var(--txt)}
+.brand-sub{font-size:15px;color:var(--txt3);margin-top:4px}
 
 .login-box{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:1.5rem;width:100%;max-width:340px}
 .login-step{display:none}
 .login-step.on{display:block}
-.ls-title{font-family:var(--mono);font-size:11px;color:var(--txt2);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
+.ls-title{font-family:var(--mono);font-size:13px;color:var(--txt2);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
 
 .user-btn{
   display:flex;align-items:center;gap:12px;width:100%;
   background:var(--s2);border:1px solid var(--bd);border-radius:var(--r-sm);
   padding:13px 14px;cursor:pointer;transition:all .15s;
-  color:var(--txt);font-family:var(--sans);font-size:14px;font-weight:500;text-align:left;
+  color:var(--txt);font-family:var(--sans);font-size:16px;font-weight:500;text-align:left;
   margin-bottom:8px
 }
 .user-btn:last-child{margin-bottom:0}
@@ -79,7 +79,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   display:flex;align-items:center;justify-content:center;
   font-size:12px;font-weight:700;font-family:var(--mono);flex-shrink:0
 }
-.u-role{font-size:11px;color:var(--txt3);font-family:var(--mono);letter-spacing:.05em;margin-top:2px}
+.u-role{font-size:13px;color:var(--txt3);font-family:var(--mono);letter-spacing:.05em;margin-top:2px}
 
 /* ── BIO step ── */
 .bio-step{text-align:center;padding:1rem 0}
@@ -94,9 +94,9 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   animation:spin 3s linear infinite
 }
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.bio-msg{font-family:var(--mono);font-size:12px;color:var(--txt2);letter-spacing:.1em;line-height:1.7;margin-bottom:1.5rem}
-.bio-user-name{font-size:16px;font-weight:600;color:var(--txt);margin-bottom:4px}
-.btn-back{background:none;border:1px solid var(--bd);border-radius:100px;padding:8px 20px;color:var(--txt2);font-family:var(--mono);font-size:11px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
+.bio-msg{font-family:var(--mono);font-size:14px;color:var(--txt2);letter-spacing:.1em;line-height:1.7;margin-bottom:1.5rem}
+.bio-user-name{font-size:20px;font-weight:600;color:var(--txt);margin-bottom:4px}
+.btn-back{background:none;border:1px solid var(--bd);border-radius:100px;padding:10px 24px;color:var(--txt2);font-family:var(--mono);font-size:13px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
 
 /* ══════════ APP HEADER ══════════ */
 .app-hdr{
@@ -104,7 +104,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   padding:.9rem 1.1rem;border-bottom:1px solid var(--bd);
   background:var(--s1);flex-shrink:0;position:relative;z-index:10
 }
-.hdr-logo{font-family:var(--mono);font-size:12px;letter-spacing:.25em;color:var(--acc)}
+.hdr-logo{font-family:var(--mono);font-size:14px;letter-spacing:.25em;color:var(--acc)}
 .hdr-right{display:flex;align-items:center;gap:10px}
 .hdr-ava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--mono)}
 .hdr-name{font-size:12px;color:var(--txt2)}
@@ -123,16 +123,16 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
 .bnav-btn{
   flex:1;padding:10px 4px 12px;display:flex;flex-direction:column;
   align-items:center;gap:3px;background:none;border:none;
-  color:var(--txt3);font-family:var(--mono);font-size:9px;letter-spacing:.1em;
+  color:var(--txt3);font-family:var(--mono);font-size:11px;letter-spacing:.1em;
   text-transform:uppercase;cursor:pointer;transition:all .15s
 }
 .bnav-btn.on{color:var(--acc)}
-.bnav-ico{font-size:18px;line-height:1}
+.bnav-ico{font-size:22px;line-height:1}
 
 /* ══════════ SECTIONS (within scroll) ══════════ */
 .pad{padding:1rem 1.1rem}
 .sec-lbl{
-  font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  font-family:var(--mono);font-size:12px;letter-spacing:.2em;
   color:var(--txt3);text-transform:uppercase;margin-bottom:10px
 }
 
@@ -156,10 +156,10 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   background:radial-gradient(circle,rgba(198,241,53,0.04) 0%,transparent 70%);
   bottom:-60px;left:50%;transform:translateX(-50%);pointer-events:none
 }
-.clock{font-family:var(--mono);font-size:48px;font-weight:300;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
-.clock-date{font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem}
+.clock{font-family:var(--mono);font-size:54px;font-weight:300;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
+.clock-date{font-family:var(--mono);font-size:13px;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem}
 
-.badge{display:inline-flex;align-items:center;gap:7px;border-radius:100px;padding:5px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;font-weight:500;margin-bottom:1.25rem}
+.badge{display:inline-flex;align-items:center;gap:7px;border-radius:100px;padding:6px 16px;font-family:var(--mono);font-size:13px;letter-spacing:.1em;font-weight:500;margin-bottom:1.25rem}
 .badge .dot{width:6px;height:6px;border-radius:50%}
 .b-off{background:var(--s2);color:var(--txt3);border:1px solid var(--bd)}
 .b-off .dot{background:var(--txt3)}
@@ -172,7 +172,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
 .btn-main{
   display:block;width:100%;max-width:240px;margin:0 auto;
   padding:16px;border:none;border-radius:var(--r);
-  font-family:var(--mono);font-size:13px;letter-spacing:.15em;font-weight:500;
+  font-family:var(--mono);font-size:15px;letter-spacing:.15em;font-weight:500;
   cursor:pointer;transition:all .18s;text-transform:uppercase
 }
 .btn-in{background:var(--acc);color:#080808}
@@ -198,28 +198,28 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   padding:14px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px
 }
 .qcard:hover,.qcard:active{border-color:var(--acc);background:var(--acc-d2)}
-.qcard-ico{font-size:18px;line-height:1}
-.qcard-lbl{font-size:13px;font-weight:500}
-.qcard-sub{font-size:11px;color:var(--txt3);font-family:var(--mono)}
+.qcard-ico{font-size:22px;line-height:1}
+.qcard-lbl{font-size:15px;font-weight:500}
+.qcard-sub{font-size:13px;color:var(--txt3);font-family:var(--mono)}
 
 /* ── Registros ── */
 .reg-item{
   background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);
   padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between
 }
-.reg-date{font-family:var(--mono);font-size:11px;color:var(--txt3);margin-bottom:3px;letter-spacing:.04em}
-.reg-time{font-family:var(--mono);font-size:14px;font-weight:500}
-.reg-sub{font-size:11px;color:var(--txt3);margin-top:2px}
-.tag-extra{font-family:var(--mono);font-size:10px;background:var(--warn-d);color:var(--warn);border-radius:6px;padding:3px 8px}
-.tag-ok{font-family:var(--mono);font-size:10px;color:var(--ok)}
+.reg-date{font-family:var(--mono);font-size:13px;color:var(--txt3);margin-bottom:3px;letter-spacing:.04em}
+.reg-time{font-family:var(--mono);font-size:16px;font-weight:500}
+.reg-sub{font-size:13px;color:var(--txt3);margin-top:2px}
+.tag-extra{font-family:var(--mono);font-size:12px;background:var(--warn-d);color:var(--warn);border-radius:6px;padding:4px 10px}
+.tag-ok{font-family:var(--mono);font-size:12px;color:var(--ok)}
 
 /* ── Summary row ── */
 .sum-row{
   display:flex;gap:1rem;background:var(--s1);border:1px solid var(--bd);
   border-radius:var(--r-sm);padding:1rem;margin-top:2px
 }
-.sum-item .sum-lbl{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
-.sum-item .sum-val{font-family:var(--mono);font-size:18px;font-weight:500}
+.sum-item .sum-lbl{font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
+.sum-item .sum-val{font-family:var(--mono);font-size:20px;font-weight:500}
 .c-ok{color:var(--ok)}.c-warn{color:var(--warn)}.c-info{color:var(--info)}
 
 /* ── Mes nav ── */
@@ -229,13 +229,13 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   padding:9px 14px;margin-bottom:10px
 }
 .mes-nav-btn{background:none;border:none;color:var(--txt2);font-size:16px;cursor:pointer;padding:0 6px}
-.mes-lbl{font-family:var(--mono);font-size:12px;color:var(--txt);letter-spacing:.08em}
+.mes-lbl{font-family:var(--mono);font-size:14px;color:var(--txt);letter-spacing:.08em}
 
 /* ══════════ ADMIN TABS ══════════ */
 .tabs{display:flex;gap:3px;background:var(--s2);border-radius:var(--r-sm);padding:3px;border:1px solid var(--bd);margin-bottom:10px;flex-shrink:0}
 .tab{
   flex:1;padding:8px 4px;border-radius:8px;border:none;background:none;
-  color:var(--txt3);font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+  color:var(--txt3);font-family:var(--mono);font-size:12px;letter-spacing:.08em;
   cursor:pointer;transition:all .15s;text-transform:uppercase
 }
 .tab.on{background:var(--acc);color:#080808;font-weight:700}
@@ -244,9 +244,9 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
 /* ── Stats grid ── */
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .scard{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);padding:14px}
-.scard-lbl{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
-.scard-val{font-family:var(--mono);font-size:24px;font-weight:500}
-.scard-sub{font-size:11px;color:var(--txt3);margin-top:3px;font-family:var(--mono)}
+.scard-lbl{font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+.scard-val{font-family:var(--mono);font-size:26px;font-weight:500}
+.scard-sub{font-size:13px;color:var(--txt3);margin-top:3px;font-family:var(--mono)}
 
 /* ── Emp card ── */
 .emp-card{
@@ -254,8 +254,8 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
   padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px
 }
 .emp-info{flex:1}
-.emp-name{font-size:14px;font-weight:500;margin-bottom:2px}
-.emp-meta{font-family:var(--mono);font-size:11px;color:var(--txt3)}
+.emp-name{font-size:16px;font-weight:500;margin-bottom:2px}
+.emp-meta{font-family:var(--mono);font-size:13px;color:var(--txt3)}
 .emp-tag{font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:6px;letter-spacing:.05em}
 .et-in{background:var(--ok-d);color:var(--ok)}
 .et-out{background:var(--s2);color:var(--txt3)}
@@ -264,33 +264,35 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
 /* ── Vac cards ── */
 .vac-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);padding:14px;margin-bottom:8px}
 .vac-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.vac-who{font-size:14px;font-weight:500}
-.vac-dates{font-family:var(--mono);font-size:11px;color:var(--txt3);margin-bottom:10px}
-.vac-reason{font-size:12px;color:var(--txt2);margin-bottom:10px;font-style:italic}
+.vac-who{font-size:16px;font-weight:500}
+.vac-dates{font-family:var(--mono);font-size:13px;color:var(--txt3);margin-bottom:10px}
+.vac-reason{font-size:14px;color:var(--txt2);margin-bottom:10px;font-style:italic}
 .vac-acts{display:flex;gap:8px}
-.btn-ok{flex:1;padding:8px;background:var(--ok-d);color:var(--ok);border:1px solid rgba(61,220,132,.3);border-radius:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
-.btn-no{flex:1;padding:8px;background:var(--err-d);color:var(--err);border:1px solid rgba(255,82,82,.3);border-radius:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
-.tag-pend{font-family:var(--mono);font-size:10px;background:var(--warn-d);color:var(--warn);padding:3px 10px;border-radius:6px;letter-spacing:.08em}
-.tag-apro{font-family:var(--mono);font-size:10px;background:var(--ok-d);color:var(--ok);padding:3px 10px;border-radius:6px;letter-spacing:.08em}
-.tag-rech{font-family:var(--mono);font-size:10px;background:var(--err-d);color:var(--err);padding:3px 10px;border-radius:6px;letter-spacing:.08em}
+.btn-ok{flex:1;padding:10px;background:var(--ok-d);color:var(--ok);border:1px solid rgba(61,220,132,.3);border-radius:8px;font-family:var(--mono);font-size:13px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
+.btn-no{flex:1;padding:10px;background:var(--err-d);color:var(--err);border:1px solid rgba(255,82,82,.3);border-radius:8px;font-family:var(--mono);font-size:13px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
+.tag-pend{font-family:var(--mono);font-size:12px;background:var(--err-d);color:var(--err);padding:4px 12px;border-radius:6px;letter-spacing:.08em}
+.tag-apro{font-family:var(--mono);font-size:12px;background:var(--ok-d);color:var(--ok);padding:4px 12px;border-radius:6px;letter-spacing:.08em}
+.tag-rech{font-family:var(--mono);font-size:12px;background:var(--s2);color:var(--txt3);padding:4px 12px;border-radius:6px;letter-spacing:.08em}
 
 /* ── Calendar ── */
 .cal{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:1rem;margin-bottom:10px}
-.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-title{font-family:var(--mono);font-size:13px;letter-spacing:.08em}
-.cal-nav{background:none;border:none;color:var(--txt2);font-size:16px;cursor:pointer;padding:0 8px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-dow{font-family:var(--mono);font-size:9px;color:var(--txt3);text-align:center;padding:4px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-title{font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.08em}
+.cal-nav{background:none;border:none;color:var(--txt2);font-size:20px;cursor:pointer;padding:0 10px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{font-family:var(--mono);font-size:11px;color:var(--txt3);text-align:center;padding:5px 0;text-transform:uppercase;letter-spacing:.05em}
 .cal-day{
   aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  border-radius:6px;font-family:var(--mono);font-size:12px;cursor:pointer;position:relative
+  border-radius:7px;font-family:var(--mono);font-size:13px;cursor:pointer;position:relative;
+  transition:all .12s
 }
 .cal-day:hover{background:var(--s3)}
-.cal-today{border:1px solid var(--acc);color:var(--acc)}
-.cal-vac-me{background:var(--ok-d);color:var(--ok)}
-.cal-vac-other{background:rgba(255,82,82,.15);color:var(--err);cursor:not-allowed;position:relative}
-.cal-vac-other::after{content:'🔒';font-size:7px;position:absolute;top:1px;right:1px}
-.cal-empty{opacity:0}
+.cal-today{border:2px solid var(--acc);color:var(--acc);font-weight:700}
+.cal-vac-pend{background:rgba(255,82,82,.25);color:var(--err);border:1px solid rgba(255,82,82,.4)}
+.cal-vac-apro{background:rgba(61,220,132,.2);color:var(--ok);border:1px solid rgba(61,220,132,.35)}
+.cal-vac-other{background:rgba(255,255,255,.04);color:var(--txt3);cursor:not-allowed;position:relative}
+.cal-vac-other::after{content:'🔒';font-size:7px;position:absolute;top:1px;right:2px}
+.cal-empty{opacity:0;pointer-events:none}
 
 /* ── Workers admin ── */
 .worker-mgmt-card{
@@ -392,8 +394,8 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
     <div class="login-step" id="ls-bio">
       <div class="bio-step">
         <div class="bio-user-name" id="bio-uname"></div>
-        <div class="bio-ring" id="bio-ring" onclick="triggerBio()">☝</div>
-        <div class="bio-msg" id="bio-msg">TOCA PARA VERIFICAR<br>TU HUELLA O FACE ID</div>
+        <div class="bio-ring" id="bio-ring" onclick="triggerBio()">🔑</div>
+        <div class="bio-msg" id="bio-msg">TOCA PARA INTRODUCIR<br>TU PIN DE ACCESO</div>
         <button class="btn-back" onclick="backToUsers()">← VOLVER</button>
       </div>
     </div>
@@ -454,11 +456,17 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15p
 
   <div class="scroll" id="wp-vacaciones" style="display:none">
     <div class="pad">
-      <div class="sec-lbl">CALENDARIO</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="sec-lbl" style="margin-bottom:0">CALENDARIO</div>
+        <div style="display:flex;gap:10px;font-family:var(--mono);font-size:11px">
+          <span style="color:var(--err)">● pendiente</span>
+          <span style="color:var(--ok)">● aprobada</span>
+        </div>
+      </div>
       <div id="w-cal"></div>
-      <div class="sec-lbl">MIS SOLICITUDES</div>
+      <div class="sec-lbl" style="margin-top:6px">MIS SOLICITUDES</div>
       <div id="w-mis-vac"></div>
-      <button class="btn-main btn-in" style="max-width:100%;margin-top:8px" onclick="openModal('m-vac-req')">+ SOLICITAR VACACIONES</button>
+      <button class="btn-main btn-in" style="max-width:100%;margin-top:10px" onclick="openModal('m-vac-req')">+ SOLICITAR VACACIONES</button>
     </div>
   </div>
 
@@ -737,28 +745,8 @@ let _bioCb = null;
 let _bioUser = null;
 
 async function triggerBio() {
-  // Intentar biometría real solo en móvil con soporte real
-  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-  if (isMobile && window.PublicKeyCredential) {
-    try {
-      const ok = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-      if (ok) {
-        const challenge = new Uint8Array(32);
-        crypto.getRandomValues(challenge);
-        try {
-          await navigator.credentials.get({
-            publicKey:{challenge, timeout:30000, userVerification:'required',
-              rpId: location.hostname}
-          });
-          bioSuccess(); return;
-        } catch(e) {
-          if (e.name==='NotAllowedError') { showToast('Autenticación cancelada','t-err'); return; }
-          // Si falla WebAuthn en móvil, caer a PIN
-        }
-      }
-    } catch(e) {}
-  }
-  // Fallback universal: PIN de 4 dígitos
+  // WebAuthn requiere credenciales registradas previamente — demasiado complejo para este caso.
+  // Usamos siempre el PIN propio que funciona en todos los dispositivos.
   showPinModal();
 }
 
@@ -923,6 +911,7 @@ function initWorker() {
   renderWorkerHistorial();
   renderWorkerVacaciones();
   wNav('fichar');
+  setTimeout(()=>checkNotifs(u.id), 700);
 }
 
 function tickClock() {
@@ -1073,61 +1062,98 @@ function renderWorkerVacaciones() {
   renderCal(uid);
   const mis = VACACIONES.filter(v=>v.userId===uid).sort((a,b)=>b.inicio.localeCompare(a.inicio));
   const el = document.getElementById('w-mis-vac');
-  if(!mis.length) { el.innerHTML=`<div class="empty"><div class="empty-ico">✈</div>Sin solicitudes</div>`; return; }
+  if(!mis.length) { el.innerHTML=`<div class="empty"><div class="empty-ico">✈</div>Sin solicitudes aún</div>`; return; }
   el.innerHTML = mis.map(v=>`
-    <div class="vac-card">
+    <div class="vac-card" style="border-left:3px solid ${v.estado==='aprobada'?'var(--ok)':v.estado==='rechazada'?'var(--txt3)':'var(--err)'}">
       <div class="vac-hdr">
         <div class="vac-who">${v.motivo||'Vacaciones'}</div>
-        <span class="${v.estado==='aprobada'?'tag-apro':v.estado==='rechazada'?'tag-rech':'tag-pend'}">${v.estado.toUpperCase()}</span>
+        <span class="${v.estado==='aprobada'?'tag-apro':v.estado==='rechazada'?'tag-rech':'tag-pend'}">${v.estado==='aprobada'?'APROBADA':v.estado==='rechazada'?'RECHAZADA':'PENDIENTE'}</span>
       </div>
-      <div class="vac-dates">${v.inicio} → ${v.fin}</div>
+      <div class="vac-dates">${formatDateRange(v.inicio,v.fin)}</div>
+      ${v.estado==='aprobada'?`<div style="font-size:12px;color:var(--ok);font-family:var(--mono);margin-top:4px">✓ Aprobado por el administrador</div>`:''}
     </div>
   `).join('');
 }
 
+function formatDateRange(ini, fin) {
+  const a = new Date(ini+'T00:00:00');
+  const b = new Date(fin+'T00:00:00');
+  const opts = {day:'numeric',month:'short'};
+  if(ini===fin) return a.toLocaleDateString('es-ES',{...opts,year:'numeric'});
+  return `${a.toLocaleDateString('es-ES',opts)} → ${b.toLocaleDateString('es-ES',{...opts,year:'numeric'})}`;
+}
+
+const CAL_STATE = { mes: new Date().getMonth(), anyo: new Date().getFullYear() };
+
 function renderCal(uid) {
-  const now = new Date();
-  const mes = now.getMonth(), anyo = now.getFullYear();
-  const myDates = myVacDates(uid);
-  const blocked = otherBlockedDates(uid);
-  const todayStr = fDate(now);
+  const mes = CAL_STATE.mes, anyo = CAL_STATE.anyo;
+  const myPend = new Set(), myApro = new Set(), otherBlocked = new Set();
+  VACACIONES.forEach(v => {
+    if(v.userId === uid) {
+      vacDates(v).forEach(d => v.estado==='aprobada' ? myApro.add(d) : v.estado==='pendiente' ? myPend.add(d) : null);
+    } else if(v.estado==='aprobada') {
+      vacDates(v).forEach(d => otherBlocked.add(d));
+    }
+  });
+  const todayStr = fDate(new Date());
   const firstDay = new Date(anyo, mes, 1);
   const lastDay = new Date(anyo, mes+1, 0);
-  let dow = firstDay.getDay(); if(dow===0)dow=7; // Mon=1
-  let html = `<div class="cal"><div class="cal-hdr"><div class="cal-title">${MESES[mes]} ${anyo}</div></div>`;
-  html += '<div class="cal-grid">';
+  let dow = firstDay.getDay(); if(dow===0)dow=7;
+  let html = `<div class="cal">
+    <div class="cal-hdr">
+      <button class="cal-nav" onclick="calNav(-1)">‹</button>
+      <div class="cal-title">${MESES[mes]} ${anyo}</div>
+      <button class="cal-nav" onclick="calNav(1)">›</button>
+    </div><div class="cal-grid">`;
   DIAS_S.forEach(d=>{ html+=`<div class="cal-dow">${d}</div>`; });
   for(let i=1;i<dow;i++) html+=`<div class="cal-day cal-empty"></div>`;
   for(let d=1;d<=lastDay.getDate();d++) {
     const ds = `${anyo}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     let cls='cal-day';
     if(ds===todayStr) cls+=' cal-today';
-    else if(myDates.has(ds)) cls+=' cal-vac-me';
-    else if(blocked.has(ds)) cls+=' cal-vac-other';
+    else if(myApro.has(ds)) cls+=' cal-vac-apro';
+    else if(myPend.has(ds)) cls+=' cal-vac-pend';
+    else if(otherBlocked.has(ds)) cls+=' cal-vac-other';
     html+=`<div class="${cls}">${d}</div>`;
   }
   html+='</div></div>';
   document.getElementById('w-cal').innerHTML = html;
 }
 
-// ── Worker vacation request ──
+function calNav(delta) {
+  CAL_STATE.mes += delta;
+  if(CAL_STATE.mes>11){CAL_STATE.mes=0;CAL_STATE.anyo++;}
+  if(CAL_STATE.mes<0){CAL_STATE.mes=11;CAL_STATE.anyo--;}
+  renderCal(STATE.user.id);
+}
+
 function submitVacReq() {
   const ini=document.getElementById('vr-ini').value;
   const fin=document.getElementById('vr-fin').value;
   const mot=document.getElementById('vr-mot').value.trim();
   if(!ini||!fin){showToast('Selecciona fechas','t-err');return;}
   if(ini>fin){showToast('La fecha fin debe ser posterior','t-err');return;}
-  // check if any date is blocked by others
-  const blocked=otherBlockedDates(STATE.user.id);
+  const uid=STATE.user.id;
   const reqDates=vacDates({inicio:ini,fin:fin});
-  const conflict=reqDates.find(d=>blocked.has(d));
-  if(conflict){showToast(`El ${conflict} está bloqueado por otro empleado`,'t-err');return;}
-  VACACIONES.push({id:Date.now()+'',userId:STATE.user.id,inicio:ini,fin:fin,motivo:mot,estado:'pendiente',ts:new Date().toISOString()});
+  // Bloquear si ya tiene esos días solicitados o aprobados
+  const myExisting=new Set();
+  VACACIONES.filter(v=>v.userId===uid&&v.estado!=='rechazada').forEach(v=>vacDates(v).forEach(d=>myExisting.add(d)));
+  const selfConflict=reqDates.find(d=>myExisting.has(d));
+  if(selfConflict){showToast(`El ${selfConflict} ya está solicitado`,'t-err');return;}
+  // Bloquear si otro empleado tiene aprobados esos días
+  const blocked=otherBlockedDates(uid);
+  const otherConflict=reqDates.find(d=>blocked.has(d));
+  if(otherConflict){showToast(`El ${otherConflict} está ocupado por otro empleado`,'t-err');return;}
+  VACACIONES.push({id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot,estado:'pendiente',ts:new Date().toISOString()});
   save('vacaciones',VACACIONES);
   closeModal('m-vac-req');
-  showToast('Solicitud enviada ✓','t-ok');
+  showToast('Solicitud enviada al administrador ✓','t-ok');
+  document.getElementById('vr-ini').value='';
+  document.getElementById('vr-fin').value='';
+  document.getElementById('vr-mot').value='';
   renderWorkerVacaciones();
 }
+
 
 // ════════════════════════════════════════
 //  ADMIN APP
@@ -1238,7 +1264,12 @@ function manageVac(id, estado) {
   const v=VACACIONES.find(x=>x.id===id);
   if(!v)return;
   v.estado=estado;
+  v.gestionadoTs=new Date().toISOString();
   save('vacaciones',VACACIONES);
+  // Guardar notificación pendiente para el empleado
+  const notifs=load('notifs_'+v.userId,[]);
+  notifs.push({id:Date.now()+'',vacId:id,estado,inicio:v.inicio,fin:v.fin,motivo:v.motivo,ts:new Date().toISOString(),leida:false});
+  save('notifs_'+v.userId,notifs);
   renderAdminVacas();
   renderAdminHoy();
   showToast(estado==='aprobada'?'Vacaciones aprobadas ✓':'Solicitud rechazada', estado==='aprobada'?'t-ok':'t-err');
@@ -1464,6 +1495,45 @@ const mani={name:'Fichalili',short_name:'Fichalili',start_url:'.',display:'stand
   icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080808'/><text y='.9em' font-size='70' x='15'>⏱</text></svg>",sizes:'192x192',type:'image/svg+xml'}]};
 const mb=new Blob([JSON.stringify(mani)],{type:'application/manifest+json'});
 document.getElementById('pwa-manifest').href=URL.createObjectURL(mb);
+
+// ── NOTIFICACIONES ──
+function checkNotifs(uid) {
+  const notifs = load('notifs_'+uid, []).filter(n=>!n.leida);
+  if(!notifs.length) return;
+  notifs.forEach((n,i) => { setTimeout(()=>showNotifBanner(n), i*3800); });
+  const all = load('notifs_'+uid, []).map(n=>({...n,leida:true}));
+  save('notifs_'+uid, all);
+}
+
+function showNotifBanner(n) {
+  const ok = n.estado==='aprobada';
+  const div = document.createElement('div');
+  div.style.cssText = `position:fixed;top:0;left:0;right:0;z-index:9999;
+    background:${ok?'#0d2e1a':'#2e0d0d'};
+    border-bottom:2px solid ${ok?'rgba(61,220,132,.5)':'rgba(255,82,82,.5)'};
+    padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;
+    animation:notifDown .3s ease-out;`;
+  const a=new Date(n.inicio+'T00:00:00'), b=new Date(n.fin+'T00:00:00');
+  const rango=a.toLocaleDateString('es-ES',{day:'numeric',month:'short'})+
+    (n.inicio!==n.fin?' → '+b.toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'');
+  div.innerHTML=`
+    <div>
+      <div style="font-family:var(--mono);font-size:12px;letter-spacing:.15em;color:${ok?'var(--ok)':'var(--err)'};margin-bottom:5px;text-transform:uppercase">
+        ${ok?'✓ VACACIONES APROBADAS':'✕ SOLICITUD RECHAZADA'}
+      </div>
+      <div style="font-size:16px;font-weight:600;color:var(--txt)">${n.motivo||'Vacaciones'}</div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--txt2);margin-top:3px">${rango}</div>
+    </div>
+    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--txt3);font-size:26px;cursor:pointer;padding:4px 10px;line-height:1">×</button>
+  `;
+  document.body.appendChild(div);
+  if(!document.querySelector('#notif-style')) {
+    const s=document.createElement('style'); s.id='notif-style';
+    s.textContent='@keyframes notifDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}';
+    document.head.appendChild(s);
+  }
+  setTimeout(()=>{ if(div.parentElement)div.remove(); }, 7000);
+}
 
 // ════════════════════════════════════════
 //  INIT
