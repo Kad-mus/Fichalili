@@ -353,7 +353,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
 .btn-go:active{transform:scale(.98)}
 .btn-go-del{flex:2;padding:13px;background:var(--err-d);border:1px solid rgba(255,82,82,.35);border-radius:var(--r-sm);color:var(--err);font-family:var(--mono);font-size:12px;letter-spacing:.1em;font-weight:700;cursor:pointer;text-transform:uppercase}
 
-/* ══════════ TOAST ══════════ */
+/* ── Toast ── */
 .toast{
   position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
   background:var(--s2);border:1px solid var(--bd2);border-radius:100px;
@@ -415,7 +415,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
     </div>
   </div>
 
-  <!-- worker nav pages -->
   <div class="scroll" id="wp-fichar" style="display:block">
     <div class="pad">
       <div class="hero">
@@ -506,7 +505,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
 
   <div class="scroll">
     <div class="pad" style="padding-top:4px">
-      <!-- TAB: Hoy -->
       <div class="tab-p on" id="ap-hoy">
         <div class="sgrid">
           <div class="scard"><div class="scard-lbl">DENTRO AHORA</div><div class="scard-val" id="a-dentro">0</div><div class="scard-sub">de <span id="a-total-w">0</span> empleados</div></div>
@@ -517,7 +515,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
         <div class="sec-lbl">ESTADO EN TIEMPO REAL</div>
         <div id="a-realtime"></div>
       </div>
-      <!-- TAB: Equipo -->
       <div class="tab-p" id="ap-equipo">
         <div class="mes-nav">
           <button class="mes-nav-btn" onclick="aChangeMes(-1)">‹</button>
@@ -526,7 +523,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
         </div>
         <div id="a-equipo-list"></div>
       </div>
-      <!-- TAB: Vacaciones -->
       <div class="tab-p" id="ap-vacas">
         <div class="sec-lbl">PENDIENTES DE APROBAR</div>
         <div id="a-vac-pend-list"></div>
@@ -535,13 +531,11 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
         <div id="a-vac-hist"></div>
         <button class="btn-main btn-in" style="max-width:100%;margin-top:8px" onclick="openModal('m-vac-admin')">+ ASIGNAR VACACIONES</button>
       </div>
-      <!-- TAB: Personal -->
       <div class="tab-p" id="ap-workers">
         <div class="sec-lbl">EMPLEADOS</div>
         <div id="a-workers-list"></div>
-        <button class="btn-add-w" onclick="openModal('m-add-worker')">+ AÑADIR EMPLEADO</button>
+        <button class="btn-add-w" onclick="openAddWorker()">+ AÑADIR EMPLEADO</button>
       </div>
-      <!-- TAB: Export -->
       <div class="tab-p" id="ap-export">
         <div class="sec-lbl">EXPORTAR REGISTROS</div>
         <div class="card">
@@ -560,7 +554,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
         </div>
         <button class="btn-exp btn-exp-xl" onclick="exportXL()">↓ EXPORTAR EXCEL (.xlsx)</button>
         <button class="btn-exp btn-exp-csv" onclick="exportCSV()">↓ EXPORTAR CSV (Inspección Trabajo)</button>
-        <div class="exp-info">RD-ley 8/2019 — Obligatorio conservar registros 4 años.<br>El CSV cumple formato para Inspección de Trabajo.</div>
       </div>
     </div>
   </div>
@@ -569,7 +562,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
 <!-- ══════════════════════════════════
      MODALS
 ══════════════════════════════════ -->
-<!-- Solicitar vacaciones (worker) -->
 <div class="overlay" id="m-vac-req">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -584,7 +576,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
   </div>
 </div>
 
-<!-- Asignar vacaciones (admin) -->
 <div class="overlay" id="m-vac-admin">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -600,7 +591,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
   </div>
 </div>
 
-<!-- Añadir/editar worker -->
 <div class="overlay" id="m-add-worker">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -621,13 +611,12 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
   </div>
 </div>
 
-<!-- Confirmar borrar worker -->
 <div class="overlay" id="m-del-worker">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Eliminar empleado</div>
     <div style="color:var(--txt2);font-size:14px;line-height:1.6;margin-bottom:1.25rem">
-      ¿Eliminar a <strong id="del-w-name"></strong>? Sus registros de fichaje se conservarán pero el empleado no podrá acceder al sistema.
+      ¿Eliminar a <strong id="del-w-name"></strong>?
     </div>
     <input type="hidden" id="del-w-id">
     <div class="macts">
@@ -642,7 +631,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 // ════════════════════════════════════════
-//  CONFIGURACIÓN
+// CONFIGURACIÓN (ACTUALIZA TU URL)
 // ════════════════════════════════════════
 const CFG = {
   GAS_URL: 'https://script.google.com/macros/s/AKfycbyy7wlpPoN-PwsBW_5JoO7DIqus6W0Erun7nUbcimD8aL3wTjqDrp06af4pPPZBJDPB/exec',
@@ -663,180 +652,55 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 const DIAS_S = ['L','M','X','J','V','S','D'];
 
 // ════════════════════════════════════════
-//  ALMACENAMIENTO + SYNC GAS
+// COMUNICACIÓN GAS (ÚNICA VERSIÓN ROBUSTA)
+// ════════════════════════════════════════
+async function syncGAS(tipo, extra = {}) {
+  if (!CFG.GAS_URL) return null;
+  const payload = { tipo, ...extra, userId: STATE.user?.id, nombre: STATE.user?.nombre, timestamp: new Date().toISOString() };
+  
+  try {
+    // Usamos text/plain y no-cors para saltar bloqueos de Google
+    await fetch(CFG.GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    console.log("Sync GAS enviado:", tipo);
+    return { ok: true };
+  } catch (e) {
+    console.error("Error Sync GAS:", e);
+    return null;
+  }
+}
+
+async function gasGet(params) {
+  if (!CFG.GAS_URL) return null;
+  const qs = new URLSearchParams(params).toString();
+  try {
+    const r = await fetch(CFG.GAS_URL + '?' + qs);
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+// ════════════════════════════════════════
+// ALMACENAMIENTO LOCAL
 // ════════════════════════════════════════
 function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } }
 function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
 
-// workers: [{id, nombre, email, color, bg, jornada, role, activo, pin}]
-let WORKERS = load('workers', [
-  { id:'admin', nombre:'Administrador', email:'', color:'#ff7eb6', bg:'rgba(255,126,182,0.12)', jornada:8, role:'admin', activo:true, pin:'0000' },
-]);
+let WORKERS = load('workers', [{ id:'admin', nombre:'Administrador', email:'', color:'#ff7eb6', bg:'rgba(255,126,182,0.12)', jornada:8, role:'admin', activo:true, pin:'0000' }]);
 let FICHAJES = load('fichajes', []);
 let VACACIONES = load('vacaciones', []);
 let JORNADAS = {};
-const TODAY = fDate(new Date());
+const TODAY = new Date().toISOString().split('T')[0];
 
 function loadJornadas() { JORNADAS = load('jornadas_' + TODAY, {}); }
 function saveJornadas() { save('jornadas_' + TODAY, JORNADAS); }
 loadJornadas();
 
-// ── GAS fetch helpers (CORS-safe) ──
-async function gasGet(params) {
-  if (!CFG.GAS_URL) return null;
-  try {
-    const qs = new URLSearchParams(params).toString();
-    // GET no dispara preflight → funciona sin CORS
-    const r = await fetch(CFG.GAS_URL + '?' + qs, { redirect: 'follow' });
-    const text = await r.text();
-    try { const d = JSON.parse(text); return d.ok ? d : null; } catch { return null; }
-  } catch(e) { console.warn('GAS GET error:', e); return null; }
-}
-
-async function gasPost(body) {
-  if (!CFG.GAS_URL) return null;
-  try {
-    // no-cors evita el preflight pero no podemos leer la respuesta — no importa para writes
-    await fetch(CFG.GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' }, // text/plain no dispara preflight
-      body: JSON.stringify(body)
-    });
-    return { ok: true };
-  } catch(e) { console.warn('GAS POST error:', e); return null; }
-}
-
-// ── Pantalla de carga ──
-function showLoader(msg) {
-  let el = document.getElementById('app-loader');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'app-loader';
-    el.style.cssText = `position:fixed;inset:0;background:var(--bg);z-index:99999;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem`;
-    el.innerHTML = `
-      <div style="font-family:var(--mono);font-size:24px;color:var(--acc);letter-spacing:.2em">FICHALILI</div>
-      <div style="width:48px;height:48px;border:2px solid var(--bd);border-top-color:var(--acc);border-radius:50%;animation:spin360 .8s linear infinite"></div>
-      <div id="loader-msg" style="font-family:var(--mono);font-size:12px;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase"></div>
-      <style>@keyframes spin360{to{transform:rotate(360deg)}}</style>
-    `;
-    document.body.appendChild(el);
-  }
-  document.getElementById('loader-msg').textContent = msg || 'Cargando...';
-}
-
-function hideLoader() {
-  const el = document.getElementById('app-loader');
-  if (el) { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }
-}
-
-// ── Sincronización inicial (pull desde GAS) ──
-async function syncPull() {
-  if (!CFG.GAS_URL) return;
-  showLoader('Conectando con el servidor...');
-
-  try {
-    // 1. Workers
-    showLoader('Cargando empleados...');
-    const wRes = await gasGet({ accion: 'workers' });
-    if (wRes?.workers?.length) {
-      // Merge: mantener admin local si no viene del servidor
-      const gasWorkers = wRes.workers.map(w => ({
-        id: w.ID || w.id,
-        nombre: w.NOMBRE || w.nombre,
-        email: w.EMAIL || w.email || '',
-        color: w.COLOR || w.color || '#c6f135',
-        bg: w.BG || w.bg || 'rgba(198,241,53,0.12)',
-        jornada: parseFloat(w.JORNADA || w.jornada) || 8,
-        role: w.ROLE || w.role || 'worker',
-        activo: (w.ACTIVO ?? w.activo) !== false && (w.ACTIVO ?? w.activo) !== 'false',
-        pin: w.PIN || w.pin || '1234',
-      }));
-      // Siempre conservar el admin local (tiene el PIN local)
-      const localAdmin = WORKERS.find(w => w.role === 'admin');
-      const merged = gasWorkers.filter(w => w.role !== 'admin');
-      if (localAdmin) merged.unshift(localAdmin);
-      WORKERS = merged;
-      save('workers', WORKERS);
-    }
-
-    // 2. Vacaciones
-    showLoader('Cargando vacaciones...');
-    const vRes = await gasGet({ accion: 'vacaciones' });
-    if (vRes?.vacaciones?.length) {
-      VACACIONES = vRes.vacaciones.map(v => ({
-        id: v.ID || v.id,
-        userId: v.USER_ID || v.userId,
-        inicio: v.INICIO || v.inicio,
-        fin: v.FIN || v.fin,
-        motivo: v.MOTIVO || v.motivo || '',
-        estado: (v.ESTADO || v.estado || 'pendiente').toLowerCase(),
-        ts: v.TIMESTAMP || v.ts || new Date().toISOString(),
-        byAdmin: v.BY_ADMIN === true || v.BY_ADMIN === 'true' || v.byAdmin || false,
-      }));
-      save('vacaciones', VACACIONES);
-    }
-
-    // 3. Fichajes del mes actual y anterior (no cargar todo)
-    showLoader('Cargando fichajes...');
-    const now = new Date();
-    const mes = now.getMonth(), anyo = now.getFullYear();
-    const fRes = await gasGet({ accion: 'fichajes', mes, anyo });
-    if (fRes?.fichajes?.length) {
-      // Merge: no sobreescribir fichajes del día de hoy (pueden estar en curso)
-      const gasF = fRes.fichajes.map(f => ({
-        id: f.ID || f.id,
-        userId: f.USER_ID || f.userId,
-        fecha: f.FECHA || f.fecha,
-        entrada: f.ENTRADA || f.entrada,
-        salida: f.SALIDA || f.salida,
-        horas: parseFloat(f.HORAS_TOTAL || f.horas) || 0,
-        duracionMs: parseFloat(f.HORAS_TOTAL || f.horas) * 3600000 || 0,
-        horasExtra: parseFloat(f.HORAS_EXTRA || f.horasExtra) || 0,
-        pausas: parseInt(f.PAUSAS || f.pausas) || 0,
-      }));
-      // Mantener fichajes locales de hoy, reemplazar el resto
-      const localHoy = FICHAJES.filter(f => f.fecha === TODAY);
-      const gasOtros = gasF.filter(f => f.fecha !== TODAY);
-      // Merge sin duplicados por id
-      const ids = new Set([...localHoy.map(f=>f.id), ...gasOtros.map(f=>f.id)]);
-      FICHAJES = [...localHoy, ...gasOtros.filter(f => !localHoy.find(lf=>lf.id===f.id))];
-      save('fichajes', FICHAJES);
-    }
-
-  } catch(e) {
-    console.warn('Error sync pull:', e);
-  }
-}
-
-// ── Push: enviar cambio puntual a GAS ──
-async function syncGAS(tipo, extra={}) {
-  if (!CFG.GAS_URL) return;
-  const body = { tipo, userId: STATE.user?.id, nombre: STATE.user?.nombre, timestamp: new Date().toISOString(), ...extra };
-  gasPost(body); // fire and forget
-}
-
-// ── Push worker a GAS ──
-async function pushWorker(w) {
-  if (!CFG.GAS_URL) return;
-  gasPost({ tipo:'worker_save', ...w });
-}
-
-// ── Push vacacion a GAS ──
-async function pushVacacion(v) {
-  if (!CFG.GAS_URL) return;
-  gasPost({ tipo:'vac_request', ...v });
-}
-
-// ── Push actualización estado vacacion ──
-async function pushVacUpdate(id, estado) {
-  if (!CFG.GAS_URL) return;
-  gasPost({ tipo:'vac_update', id, estado });
-}
-
 // ════════════════════════════════════════
-//  UTILS
+// UTILS
 // ════════════════════════════════════════
 function fDate(d) { return d.toISOString().split('T')[0]; }
 function fTime(d) { return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
@@ -868,45 +732,16 @@ function extrasMes(uid, mes, anyo) {
     .reduce((a,f)=>a+Math.max(0,f.duracionMs-jNorm), 0);
 }
 
-// ── Vacation conflict check ──
-function vacDates(vac) {
-  const dates = [];
-  const d = new Date(vac.inicio);
-  const fin = new Date(vac.fin);
-  while(d <= fin) { dates.push(fDate(new Date(d))); d.setDate(d.getDate()+1); }
-  return dates;
-}
-
-function otherBlockedDates(myUid) {
-  // Dates blocked by OTHER workers' approved vacations
-  const blocked = new Set();
-  VACACIONES
-    .filter(v => v.userId !== myUid && v.estado === 'aprobada')
-    .forEach(v => vacDates(v).forEach(d => blocked.add(d)));
-  return blocked;
-}
-
-function myVacDates(uid) {
-  const mine = new Set();
-  VACACIONES.filter(v=>v.userId===uid && v.estado==='aprobada').forEach(v=>vacDates(v).forEach(d=>mine.add(d)));
-  return mine;
-}
-
 // ════════════════════════════════════════
-//  BIOMETRÍA
+// BIOMETRÍA / PIN
 // ════════════════════════════════════════
 let _bioCb = null;
 let _bioUser = null;
+let _pinValue = '';
 
-async function triggerBio() {
-  // WebAuthn requiere credenciales registradas previamente — demasiado complejo para este caso.
-  // Usamos siempre el PIN propio que funciona en todos los dispositivos.
-  showPinModal();
-}
+function triggerBio() { showPinModal(); }
 
-// ── PIN modal ──
 function showPinModal() {
-  // Crear modal PIN si no existe
   if (!document.getElementById('pin-modal')) {
     const div = document.createElement('div');
     div.id = 'pin-modal';
@@ -926,17 +761,12 @@ function showPinModal() {
       <div id="pin-err" style="font-family:var(--mono);font-size:11px;color:var(--err);letter-spacing:.1em;min-height:16px"></div>
     `;
     document.body.appendChild(div);
-    // Numpad
     const pad = div.querySelector('#pin-pad');
     [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n => {
       const btn = document.createElement('button');
       btn.textContent = n;
       btn.style.cssText = 'width:72px;height:56px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;color:var(--txt);font-family:var(--mono);font-size:20px;cursor:pointer;transition:all .1s';
-      btn.addEventListener('click', () => {
-        if (n==='') return;
-        if (n==='⌫') { pinBackspace(); return; }
-        pinDigit(String(n));
-      });
+      btn.addEventListener('click', () => { if(n==='') return; if(n==='⌫') { pinBackspace(); return; } pinDigit(String(n)); });
       pad.appendChild(btn);
     });
   }
@@ -947,8 +777,6 @@ function showPinModal() {
   document.getElementById('pin-modal').style.display = 'flex';
 }
 
-let _pinValue = '';
-
 function pinDigit(d) {
   if (_pinValue.length >= 4) return;
   _pinValue += d;
@@ -957,31 +785,16 @@ function pinDigit(d) {
 }
 function pinBackspace() { _pinValue = _pinValue.slice(0,-1); updatePinDots(); }
 function pinClear() { _pinValue = ''; updatePinDots(); }
-function cancelPin() {
-  _pinValue = '';
-  document.getElementById('pin-modal').style.display = 'none';
-  showToast('Cancelado','t-warn');
-}
-function updatePinDots() {
-  document.querySelectorAll('.pdot').forEach((d,i) => d.classList.toggle('fill', i < _pinValue.length));
-}
+function cancelPin() { document.getElementById('pin-modal').style.display = 'none'; showToast('Cancelado','t-warn'); }
+function updatePinDots() { document.querySelectorAll('.pdot').forEach((d,i) => d.classList.toggle('fill', i < _pinValue.length)); }
 function checkPin() {
-  const userPin = _bioUser?.pin || '1234'; // PIN por defecto
-  if (_pinValue === userPin) {
+  if (_pinValue === (_bioUser?.pin || '1234')) {
     document.getElementById('pin-modal').style.display = 'none';
-    _pinValue = '';
-    bioSuccess();
+    const cb = _bioCb; _bioCb = null; if(cb) cb();
   } else {
     document.getElementById('pin-err').textContent = 'PIN INCORRECTO';
-    _pinValue = '';
-    updatePinDots();
-    setTimeout(()=>{ if(document.getElementById('pin-err')) document.getElementById('pin-err').textContent=''; }, 1500);
+    _pinValue = ''; updatePinDots();
   }
-}
-
-function bioSuccess() {
-  const cb = _bioCb; _bioCb = null;
-  if (cb) cb();
 }
 
 function requireBio(user, cb) {
@@ -991,25 +804,26 @@ function requireBio(user, cb) {
   document.getElementById('ls-bio').classList.add('on');
 }
 
-function backToUsers() {
-  _bioCb = null; _bioUser = null;
-  document.getElementById('ls-bio').classList.remove('on');
-  document.getElementById('ls-users').classList.add('on');
-}
+function backToUsers() { document.getElementById('ls-bio').classList.remove('on'); document.getElementById('ls-users').classList.add('on'); }
 
 // ════════════════════════════════════════
-//  RENDER LOGIN
+// LÓGICA DE NAVEGACIÓN Y RENDER
 // ════════════════════════════════════════
+const STATE = {
+  user: null,
+  wPage: 'fichar',
+  wMes: new Date().getMonth(),
+  wAnyo: new Date().getFullYear(),
+  aMes: new Date().getMonth(),
+  aAnyo: new Date().getFullYear(),
+};
+
 function renderLogin() {
   const ul = document.getElementById('user-list');
-  const all = WORKERS.filter(w=>w.activo);
-  ul.innerHTML = all.map(u=>`
+  ul.innerHTML = WORKERS.filter(w=>w.activo).map(u=>`
     <button class="user-btn" onclick="selectUser('${u.id}')">
       <div class="ava" style="background:${u.bg};color:${u.color}">${initials(u.nombre)}</div>
-      <div>
-        <div>${u.nombre}</div>
-        <div class="u-role">${u.role==='admin'?'ADMINISTRADOR':'EMPLEADO'}</div>
-      </div>
+      <div><div>${u.nombre}</div><div class="u-role">${u.role==='admin'?'ADMINISTRADOR':'EMPLEADO'}</div></div>
     </button>
   `).join('');
 }
@@ -1024,56 +838,36 @@ function selectUser(uid) {
   });
 }
 
-// ════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════
-const STATE = {
-  user: null,
-  wPage: 'fichar',
-  wMes: new Date().getMonth(),
-  wAnyo: new Date().getFullYear(),
-  aMes: new Date().getMonth(),
-  aAnyo: new Date().getFullYear(),
-  _clockInt: null,
-  _jornadaInt: null,
-  _adminInt: null,
-  mwColorSel: 0,
-};
-
 function logout() {
-  [STATE._clockInt, STATE._jornadaInt, STATE._adminInt].forEach(i=>clearInterval(i));
   STATE.user = null;
   backToUsers();
   showScr('s-login');
   renderLogin();
 }
 
+function showScr(id) {
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
 // ════════════════════════════════════════
-//  WORKER APP
+// APP TRABAJADOR
 // ════════════════════════════════════════
 function initWorker() {
   showScr('s-worker');
   const u = STATE.user;
   document.getElementById('w-hdr-ava').innerHTML = initials(u.nombre);
   document.getElementById('w-hdr-ava').style.background = u.bg;
-  document.getElementById('w-hdr-ava').style.color = u.color;
   document.getElementById('w-hdr-name').textContent = u.nombre.split(' ')[0];
-  clearInterval(STATE._clockInt);
-  STATE._clockInt = setInterval(tickClock, 1000);
-  tickClock();
   renderWorkerStatus();
-  renderWorkerHistorial();
-  renderWorkerVacaciones();
   wNav('fichar');
-  setTimeout(()=>checkNotifs(u.id), 700);
+  setInterval(tickClock, 1000);
 }
 
 function tickClock() {
   const n = new Date();
   const el = document.getElementById('w-clock');
   if (el) el.textContent = n.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-  const de = document.getElementById('w-date');
-  if (de) de.textContent = n.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
 }
 
 function renderWorkerStatus() {
@@ -1083,35 +877,18 @@ function renderWorkerStatus() {
   const badge = document.getElementById('w-badge');
   const btxt = document.getElementById('w-badge-txt');
   const btnM = document.getElementById('w-btn-main');
-  const jrow = document.getElementById('w-jtimer-row');
-  const pbtn = document.getElementById('w-btn-pause');
 
   badge.className = 'badge ' + (estado==='dentro'?'b-on':estado==='pausa'?'b-pause':'b-off');
   btxt.textContent = estado==='dentro'?'EN JORNADA':estado==='pausa'?'EN PAUSA':'FUERA';
 
   if (estado==='fuera') {
     btnM.className='btn-main btn-in'; btnM.textContent='↯ FICHAR ENTRADA'; btnM.onclick=doFichar;
-    jrow.style.display='none'; pbtn.style.display='none';
-    clearInterval(STATE._jornadaInt);
-  } else if (estado==='dentro') {
+    document.getElementById('w-jtimer-row').style.display='none';
+  } else {
     btnM.className='btn-main btn-out'; btnM.textContent='⏹ FICHAR SALIDA'; btnM.onclick=doSalida;
-    jrow.style.display='block'; pbtn.style.display='block'; pbtn.textContent='⏸ PAUSA';
-    pbtn.onclick=togglePausa;
-    startJornadaTimer();
-  } else if (estado==='pausa') {
-    btnM.className='btn-main btn-resume'; btnM.textContent='▶ REANUDAR'; btnM.onclick=togglePausa;
-    jrow.style.display='block'; pbtn.style.display='none';
-    startJornadaTimer();
+    document.getElementById('w-jtimer-row').style.display='block';
+    document.getElementById('w-btn-pause').style.display='block';
   }
-}
-
-function startJornadaTimer() {
-  clearInterval(STATE._jornadaInt);
-  STATE._jornadaInt = setInterval(()=>{
-    const j = JORNADAS[STATE.user?.id];
-    const el = document.getElementById('w-jtimer');
-    if(el) el.textContent = msToHhMmSs(jornadaMs(j));
-  },1000);
 }
 
 function doFichar() {
@@ -1120,8 +897,8 @@ function doFichar() {
     JORNADAS[uid] = { entrada:Date.now(), pausas:[], estado:'dentro' };
     saveJornadas();
     renderWorkerStatus();
-    showToast('Entrada registrada ✓','t-ok');
     syncGAS('entrada');
+    showToast('Entrada registrada','t-ok');
   });
 }
 
@@ -1129,588 +906,103 @@ function doSalida() {
   requireBio(STATE.user, ()=>{
     const uid = STATE.user.id;
     const j = JORNADAS[uid];
-    if(!j) return;
-    j.salida = Date.now(); j.estado = 'fuera';
-    if(j.pausas?.length) { const lp=j.pausas[j.pausas.length-1]; if(!lp.fin)lp.fin=Date.now(); }
+    j.salida = Date.now();
     const durMs = jornadaMs(j);
     const w = getWorker(uid);
-    const jNorm = (w?.jornada||CFG.JORNADA_DEFAULT)*3600000;
+    const horas = durMs/3600000;
     const fichaje = {
-      id: Date.now()+'', userId:uid, fecha:TODAY,
+      id: 'F'+Date.now(), userId:uid, nombre:w.nombre, fecha:TODAY,
       entrada:fTime(new Date(j.entrada)), salida:fTime(new Date(j.salida)),
-      duracionMs:durMs, horas:+(durMs/3600000).toFixed(2),
-      horasExtra:+Math.max(0,(durMs-jNorm)/3600000).toFixed(2), pausas:j.pausas.length
+      horas: +horas.toFixed(2),
+      horasExtra: +Math.max(0, horas - w.jornada).toFixed(2),
+      pausas: j.pausas.length
     };
     FICHAJES.push(fichaje);
-    save('fichajes',FICHAJES);
+    save('fichajes', FICHAJES);
+    delete JORNADAS[uid];
     saveJornadas();
-    clearInterval(STATE._jornadaInt);
     renderWorkerStatus();
-    renderWorkerHistorial();
-    showToast(`Salida: ${msToH(durMs)} registradas ✓`,'t-ok');
-    // Push completo a GAS
-    syncGAS('salida', {
-      fecha: TODAY, entrada: fichaje.entrada, salida: fichaje.salida,
-      horas: fichaje.horas, horasExtra: fichaje.horasExtra,
-      duracionMs: durMs, pausas: fichaje.pausas
-    });
+    syncGAS('salida', fichaje);
+    showToast('Salida registrada','t-ok');
   });
 }
 
 function togglePausa() {
-  const uid=STATE.user.id; const j=JORNADAS[uid]; if(!j)return;
+  const uid=STATE.user.id; const j=JORNADAS[uid];
   if(j.estado==='dentro') {
     j.pausas.push({inicio:Date.now()}); j.estado='pausa';
-    showToast('Pausa iniciada','t-warn');
-  } else if(j.estado==='pausa') {
-    const lp=j.pausas[j.pausas.length-1]; if(lp&&!lp.fin)lp.fin=Date.now();
-    j.estado='dentro'; showToast('Jornada reanudada ✓','t-ok');
+  } else {
+    j.pausas[j.pausas.length-1].fin = Date.now(); j.estado='dentro';
   }
   saveJornadas(); renderWorkerStatus();
 }
 
-function wNav(page) {
-  STATE.wPage = page;
-  ['fichar','historial','vacaciones'].forEach(p=>{
-    document.getElementById('wp-'+p).style.display = p===page?'block':'none';
-    const b = document.getElementById('wb-'+p);
-    if(b) b.classList.toggle('on', p===page);
+function wNav(p) {
+  ['fichar','historial','vacaciones'].forEach(page=>{
+    document.getElementById('wp-'+page).style.display = p===page?'block':'none';
+    document.getElementById('wb-'+page).classList.toggle('on', p===page);
   });
-  if(page==='historial') renderWorkerHistorial();
-  if(page==='vacaciones') renderWorkerVacaciones();
 }
-
-function renderWorkerHistorial() {
-  const uid=STATE.user.id, mes=STATE.wMes, anyo=STATE.wAnyo;
-  document.getElementById('w-mes').textContent = `${MESES[mes]} ${anyo}`;
-  const regs = FICHAJES.filter(f=>{ const d=new Date(f.fecha); return f.userId===uid&&d.getMonth()===mes&&d.getFullYear()===anyo; })
-    .sort((a,b)=>b.fecha.localeCompare(a.fecha));
-  const totalOrd = regs.reduce((a,f)=>a+Math.min(f.horas,getWorker(uid)?.jornada||CFG.JORNADA_DEFAULT),0);
-  const totalExt = regs.reduce((a,f)=>a+f.horasExtra,0);
-  const diasVac = VACACIONES.filter(v=>{
-    const d=new Date(v.inicio);
-    return v.userId===uid && d.getMonth()===mes && d.getFullYear()===anyo && v.estado==='aprobada';
-  }).length;
-  const rEl = document.getElementById('w-regs');
-  if(!regs.length) { rEl.innerHTML=`<div class="empty"><div class="empty-ico">◷</div>Sin registros este mes</div>`; }
-  else rEl.innerHTML = regs.map(f=>`
-    <div class="reg-item">
-      <div>
-        <div class="reg-date">${new Date(f.fecha).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).toUpperCase()}</div>
-        <div class="reg-time">${f.entrada} → ${f.salida}</div>
-        <div class="reg-sub">${f.horas.toFixed(1)}h totales</div>
-      </div>
-      <div>${f.horasExtra>0?`<span class="tag-extra">+${f.horasExtra.toFixed(1)}h extra</span>`:`<span class="tag-ok">✓ Normal</span>`}</div>
-    </div>
-  `).join('');
-  document.getElementById('w-sum').innerHTML = `
-    <div class="sum-item"><div class="sum-lbl">ORDINARIAS</div><div class="sum-val">${totalOrd.toFixed(1)}h</div></div>
-    <div class="sum-item"><div class="sum-lbl">EXTRA</div><div class="sum-val c-warn">${totalExt.toFixed(1)}h</div></div>
-    <div class="sum-item"><div class="sum-lbl">VACACIONES</div><div class="sum-val c-info">${diasVac}d</div></div>
-  `;
-}
-
-function wChangeMes(d) {
-  STATE.wMes+=d;
-  if(STATE.wMes>11){STATE.wMes=0;STATE.wAnyo++;}
-  if(STATE.wMes<0){STATE.wMes=11;STATE.wAnyo--;}
-  renderWorkerHistorial();
-}
-
-function renderWorkerVacaciones() {
-  const uid = STATE.user.id;
-  renderCal(uid);
-  const mis = VACACIONES.filter(v=>v.userId===uid).sort((a,b)=>b.inicio.localeCompare(a.inicio));
-  const el = document.getElementById('w-mis-vac');
-  if(!mis.length) { el.innerHTML=`<div class="empty"><div class="empty-ico">✈</div>Sin solicitudes aún</div>`; return; }
-  el.innerHTML = mis.map(v=>`
-    <div class="vac-card" style="border-left:3px solid ${v.estado==='aprobada'?'var(--ok)':v.estado==='rechazada'?'var(--txt3)':'var(--err)'}">
-      <div class="vac-hdr">
-        <div class="vac-who">${v.motivo||'Vacaciones'}</div>
-        <span class="${v.estado==='aprobada'?'tag-apro':v.estado==='rechazada'?'tag-rech':'tag-pend'}">${v.estado==='aprobada'?'APROBADA':v.estado==='rechazada'?'RECHAZADA':'PENDIENTE'}</span>
-      </div>
-      <div class="vac-dates">${formatDateRange(v.inicio,v.fin)}</div>
-      ${v.estado==='aprobada'?`<div style="font-size:12px;color:var(--ok);font-family:var(--mono);margin-top:4px">✓ Aprobado por el administrador</div>`:''}
-    </div>
-  `).join('');
-}
-
-function formatDateRange(ini, fin) {
-  const a = new Date(ini+'T00:00:00');
-  const b = new Date(fin+'T00:00:00');
-  const opts = {day:'numeric',month:'short'};
-  if(ini===fin) return a.toLocaleDateString('es-ES',{...opts,year:'numeric'});
-  return `${a.toLocaleDateString('es-ES',opts)} → ${b.toLocaleDateString('es-ES',{...opts,year:'numeric'})}`;
-}
-
-const CAL_STATE = { mes: new Date().getMonth(), anyo: new Date().getFullYear() };
-
-function renderCal(uid) {
-  const mes = CAL_STATE.mes, anyo = CAL_STATE.anyo;
-  const myPend = new Set(), myApro = new Set(), otherBlocked = new Set();
-  VACACIONES.forEach(v => {
-    if(v.userId === uid) {
-      vacDates(v).forEach(d => v.estado==='aprobada' ? myApro.add(d) : v.estado==='pendiente' ? myPend.add(d) : null);
-    } else if(v.estado==='aprobada') {
-      vacDates(v).forEach(d => otherBlocked.add(d));
-    }
-  });
-  const todayStr = fDate(new Date());
-  const firstDay = new Date(anyo, mes, 1);
-  const lastDay = new Date(anyo, mes+1, 0);
-  let dow = firstDay.getDay(); if(dow===0)dow=7;
-  let html = `<div class="cal">
-    <div class="cal-hdr">
-      <button class="cal-nav" onclick="calNav(-1)">‹</button>
-      <div class="cal-title">${MESES[mes]} ${anyo}</div>
-      <button class="cal-nav" onclick="calNav(1)">›</button>
-    </div><div class="cal-grid">`;
-  DIAS_S.forEach(d=>{ html+=`<div class="cal-dow">${d}</div>`; });
-  for(let i=1;i<dow;i++) html+=`<div class="cal-day cal-empty"></div>`;
-  for(let d=1;d<=lastDay.getDate();d++) {
-    const ds = `${anyo}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    let cls='cal-day';
-    if(ds===todayStr) cls+=' cal-today';
-    else if(myApro.has(ds)) cls+=' cal-vac-apro';
-    else if(myPend.has(ds)) cls+=' cal-vac-pend';
-    else if(otherBlocked.has(ds)) cls+=' cal-vac-other';
-    html+=`<div class="${cls}">${d}</div>`;
-  }
-  html+='</div></div>';
-  document.getElementById('w-cal').innerHTML = html;
-}
-
-function calNav(delta) {
-  CAL_STATE.mes += delta;
-  if(CAL_STATE.mes>11){CAL_STATE.mes=0;CAL_STATE.anyo++;}
-  if(CAL_STATE.mes<0){CAL_STATE.mes=11;CAL_STATE.anyo--;}
-  renderCal(STATE.user.id);
-}
-
-function submitVacReq() {
-  const ini=document.getElementById('vr-ini').value;
-  const fin=document.getElementById('vr-fin').value;
-  const mot=document.getElementById('vr-mot').value.trim();
-  if(!ini||!fin){showToast('Selecciona fechas','t-err');return;}
-  if(ini>fin){showToast('La fecha fin debe ser posterior','t-err');return;}
-  const uid=STATE.user.id;
-  const reqDates=vacDates({inicio:ini,fin:fin});
-  // Bloquear si ya tiene esos días solicitados o aprobados
-  const myExisting=new Set();
-  VACACIONES.filter(v=>v.userId===uid&&v.estado!=='rechazada').forEach(v=>vacDates(v).forEach(d=>myExisting.add(d)));
-  const selfConflict=reqDates.find(d=>myExisting.has(d));
-  if(selfConflict){showToast(`El ${selfConflict} ya está solicitado`,'t-err');return;}
-  // Bloquear si otro empleado tiene aprobados esos días
-  const blocked=otherBlockedDates(uid);
-  const otherConflict=reqDates.find(d=>blocked.has(d));
-  if(otherConflict){showToast(`El ${otherConflict} está ocupado por otro empleado`,'t-err');return;}
-  const vac = {id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot,estado:'pendiente',ts:new Date().toISOString()};
-  VACACIONES.push(vac);
-  save('vacaciones',VACACIONES);
-  pushVacacion({...vac, nombre: STATE.user.nombre});
-  closeModal('m-vac-req');
-  showToast('Solicitud enviada al administrador ✓','t-ok');
-  document.getElementById('vr-ini').value='';
-  document.getElementById('vr-fin').value='';
-  document.getElementById('vr-mot').value='';
-  renderWorkerVacaciones();
-}
-
 
 // ════════════════════════════════════════
-//  ADMIN APP
+// APP ADMIN
 // ════════════════════════════════════════
 function initAdmin() {
   showScr('s-admin');
-  const u=STATE.user;
-  document.getElementById('a-hdr-ava').innerHTML=initials(u.nombre);
-  document.getElementById('a-hdr-ava').style.background=u.bg;
-  document.getElementById('a-hdr-ava').style.color=u.color;
-  initExport();
-  populateVaAdminWorkers();
-  renderAdminHoy();
-  renderAdminEquipo();
-  renderAdminVacas();
   renderAdminWorkers();
-  clearInterval(STATE._adminInt);
-  STATE._adminInt = setInterval(renderAdminHoy, 15000);
+  aTab('hoy');
 }
 
-function aTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i)=>{
-    const ts=['hoy','equipo','vacas','workers','export'];
-    t.classList.toggle('on',ts[i]===tab);
-  });
+function aTab(t) {
   document.querySelectorAll('.tab-p').forEach(p=>p.classList.remove('on'));
-  document.getElementById('ap-'+tab).classList.add('on');
+  document.getElementById('ap-'+t).classList.add('on');
 }
 
-function renderAdminHoy() {
-  const ws=getWorkers();
-  document.getElementById('a-total-w').textContent=ws.length;
-  const dentro=ws.filter(w=>JORNADAS[w.id]?.estado==='dentro').length;
-  document.getElementById('a-dentro').textContent=dentro;
-  const hoyMs=ws.reduce((a,w)=>a+jornadaMs(JORNADAS[w.id]),0);
-  document.getElementById('a-horas-hoy').textContent=msToH(hoyMs);
-  const mes=new Date().getMonth(), anyo=new Date().getFullYear();
-  const extMs=ws.reduce((a,w)=>a+extrasMes(w.id,mes,anyo),0);
-  document.getElementById('a-extras').textContent=msToH(extMs);
-  const pendN=VACACIONES.filter(v=>v.estado==='pendiente').length;
-  document.getElementById('a-vac-n').textContent=pendN;
-  document.getElementById('a-realtime').innerHTML=ws.map(w=>{
-    const j=JORNADAS[w.id]; const est=j?.estado||'fuera';
-    return `<div class="emp-card">
-      <div class="ava" style="background:${w.bg};color:${w.color};width:36px;height:36px;font-size:11px">${initials(w.nombre)}</div>
-      <div class="emp-info"><div class="emp-name">${w.nombre}</div><div class="emp-meta">${est==='fuera'?'Sin fichar hoy':msToHhMmSs(jornadaMs(j))}</div></div>
-      <span class="emp-tag ${est==='dentro'?'et-in':est==='pausa'?'et-pause':'et-out'}">${est==='dentro'?'DENTRO':est==='pausa'?'PAUSA':'FUERA'}</span>
-    </div>`;
-  }).join('');
-}
-
-function renderAdminEquipo() {
-  const mes=STATE.aMes, anyo=STATE.aAnyo;
-  document.getElementById('a-mes').textContent=`${MESES[mes]} ${anyo}`;
-  document.getElementById('a-equipo-list').innerHTML=getWorkers().map(w=>{
-    const regs=FICHAJES.filter(f=>{ const d=new Date(f.fecha); return f.userId===w.id&&d.getMonth()===mes&&d.getFullYear()===anyo; });
-    const totalH=regs.reduce((a,f)=>a+f.horas,0);
-    const extH=regs.reduce((a,f)=>a+f.horasExtra,0);
-    return `<div class="emp-card" style="flex-wrap:wrap;gap:10px">
-      <div class="ava" style="background:${w.bg};color:${w.color};width:36px;height:36px;font-size:11px">${initials(w.nombre)}</div>
-      <div class="emp-info"><div class="emp-name">${w.nombre}</div><div class="emp-meta">${regs.length} días fichados</div></div>
-      <div style="display:flex;gap:1rem;width:100%;padding-left:48px">
-        <div><div class="sec-lbl">HORAS</div><div style="font-family:var(--mono);font-size:16px">${totalH.toFixed(1)}h</div></div>
-        <div><div class="sec-lbl">EXTRA</div><div style="font-family:var(--mono);font-size:16px;color:var(--warn)">${extH.toFixed(1)}h</div></div>
-        <div><div class="sec-lbl">JORNADA</div><div style="font-family:var(--mono);font-size:16px">${w.jornada}h/d</div></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function aChangeMes(d) {
-  STATE.aMes+=d;
-  if(STATE.aMes>11){STATE.aMes=0;STATE.aAnyo++;}
-  if(STATE.aMes<0){STATE.aMes=11;STATE.aAnyo--;}
-  renderAdminEquipo();
-}
-
-function renderAdminVacas() {
-  const pend=VACACIONES.filter(v=>v.estado==='pendiente').sort((a,b)=>a.ts.localeCompare(b.ts));
-  const el=document.getElementById('a-vac-pend-list');
-  if(!pend.length) el.innerHTML=`<div class="empty"><div class="empty-ico">✈</div>Sin solicitudes pendientes</div>`;
-  else el.innerHTML=pend.map(v=>{
-    const w=getWorker(v.userId);
-    return `<div class="vac-card">
-      <div class="vac-hdr"><div class="vac-who">${w?.nombre||'Empleado'}</div><span class="tag-pend">PENDIENTE</span></div>
-      <div class="vac-dates">${v.inicio} → ${v.fin}</div>
-      ${v.motivo?`<div class="vac-reason">"${v.motivo}"</div>`:''}
-      <div class="vac-acts">
-        <button class="btn-ok" onclick="manageVac('${v.id}','aprobada')">✓ APROBAR</button>
-        <button class="btn-no" onclick="manageVac('${v.id}','rechazada')">✕ RECHAZAR</button>
-      </div>
-    </div>`;
-  }).join('');
-
-  const hist=VACACIONES.filter(v=>v.estado!=='pendiente').sort((a,b)=>b.ts.localeCompare(a.ts));
-  const hel=document.getElementById('a-vac-hist');
-  if(!hist.length) hel.innerHTML=`<div class="empty" style="padding:1rem">Sin historial</div>`;
-  else hel.innerHTML=hist.map(v=>{
-    const w=getWorker(v.userId);
-    return `<div class="vac-card">
-      <div class="vac-hdr"><div class="vac-who">${w?.nombre||'?'}</div><span class="${v.estado==='aprobada'?'tag-apro':'tag-rech'}">${v.estado.toUpperCase()}</span></div>
-      <div class="vac-dates">${v.inicio} → ${v.fin}</div>
-    </div>`;
-  }).join('');
-}
-
-function manageVac(id, estado) {
-  const v=VACACIONES.find(x=>x.id===id);
-  if(!v)return;
-  v.estado=estado;
-  v.gestionadoTs=new Date().toISOString();
-  save('vacaciones',VACACIONES);
-  pushVacUpdate(id, estado);
-  // Guardar notificación pendiente para el empleado
-  const notifs=load('notifs_'+v.userId,[]);
-  notifs.push({id:Date.now()+'',vacId:id,estado,inicio:v.inicio,fin:v.fin,motivo:v.motivo,ts:new Date().toISOString(),leida:false});
-  save('notifs_'+v.userId,notifs);
-  renderAdminVacas();
-  renderAdminHoy();
-  showToast(estado==='aprobada'?'Vacaciones aprobadas ✓':'Solicitud rechazada', estado==='aprobada'?'t-ok':'t-err');
-}
-
-function adminAssignVac() {
-  const uid=document.getElementById('va-emp').value;
-  const ini=document.getElementById('va-ini').value;
-  const fin=document.getElementById('va-fin').value;
-  const mot=document.getElementById('va-mot').value.trim();
-  if(!uid||!ini||!fin){showToast('Rellena todos los campos','t-err');return;}
-  if(ini>fin){showToast('Fecha fin debe ser posterior','t-err');return;}
-  const vac={id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot||'Vacaciones',estado:'aprobada',ts:new Date().toISOString(),byAdmin:true};
-  VACACIONES.push(vac);
-  save('vacaciones',VACACIONES);
-  const w=getWorker(uid);
-  pushVacacion({...vac, nombre: w?.nombre||uid});
-  closeModal('m-vac-admin');
-  renderAdminVacas();
-  showToast('Vacaciones asignadas y aprobadas ✓','t-ok');
-}
-
-function populateVaAdminWorkers() {
-  const sel=document.getElementById('va-emp');
-  sel.innerHTML=getWorkers().map(w=>`<option value="${w.id}">${w.nombre}</option>`).join('');
-}
-
-// ── Worker management ──
-function renderAdminWorkers() {
-  const el=document.getElementById('a-workers-list');
-  el.innerHTML=getWorkers().map(w=>`
-    <div class="worker-mgmt-card">
-      <div class="wm-hdr">
-        <div class="ava" style="background:${w.bg};color:${w.color};width:36px;height:36px;font-size:11px">${initials(w.nombre)}</div>
-        <div class="wm-info">
-          <div class="wm-name">${w.nombre}</div>
-          <div class="wm-meta">Jornada: ${w.jornada}h/día · PIN: ${'·'.repeat((w.pin||'1234').length)}${w.email?' · '+w.email:''}</div>
-        </div>
-      </div>
-      <div class="wm-acts">
-        <button class="btn-edit" onclick="editWorker('${w.id}')">EDITAR</button>
-        <button class="btn-del" onclick="promptDelWorker('${w.id}')">ELIMINAR</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderColorPicker(selIdx) {
-  document.getElementById('mw-colors').innerHTML=AVATAR_COLORS.map((c,i)=>`
-    <div class="color-opt${i===selIdx?' sel':''}" style="background:${c.color}"
-      onclick="selectColor(${i})"></div>
-  `).join('');
-}
-
-function selectColor(i) {
-  STATE.mwColorSel=i;
-  document.querySelectorAll('.color-opt').forEach((el,idx)=>el.classList.toggle('sel',idx===i));
-}
-
-function openAddWorker() {
-  document.getElementById('mw-title').textContent='Añadir empleado';
-  document.getElementById('mw-id').value='';
-  document.getElementById('mw-nombre').value='';
-  document.getElementById('mw-email').value='';
-  document.getElementById('mw-jornada').value=CFG.JORNADA_DEFAULT;
-  STATE.mwColorSel=0;
-  renderColorPicker(0);
-  openModal('m-add-worker');
-}
-
-function editWorker(id) {
-  const w=getWorker(id);
-  if(!w)return;
-  document.getElementById('mw-title').textContent='Editar empleado';
-  document.getElementById('mw-id').value=id;
-  document.getElementById('mw-nombre').value=w.nombre;
-  document.getElementById('mw-email').value=w.email||'';
-  document.getElementById('mw-jornada').value=w.jornada;
-  document.getElementById('mw-pin').value=w.pin||'1234';
-  const ci=AVATAR_COLORS.findIndex(c=>c.color===w.color);
-  STATE.mwColorSel=ci>=0?ci:0;
-  renderColorPicker(STATE.mwColorSel);
-  openModal('m-add-worker');
-}
+function openAddWorker() { openModal('m-add-worker'); }
 
 function saveWorker() {
-  const id=document.getElementById('mw-id').value;
-  const nombre=document.getElementById('mw-nombre').value.trim();
-  const email=document.getElementById('mw-email').value.trim();
-  const jornada=parseFloat(document.getElementById('mw-jornada').value)||8;
-  const pin=document.getElementById('mw-pin').value.replace(/\D/g,'').slice(0,4) || '1234';
-  if(!nombre){showToast('El nombre es obligatorio','t-err');return;}
-  const col=AVATAR_COLORS[STATE.mwColorSel];
-  let worker;
-  if(id) {
-    worker=getWorker(id);
-    if(worker){ worker.nombre=nombre; worker.email=email; worker.jornada=jornada; worker.pin=pin; worker.color=col.color; worker.bg=col.bg; }
-  } else {
-    worker={id:'w'+Date.now(), nombre, email, color:col.color, bg:col.bg, jornada, pin, role:'worker', activo:true};
-    WORKERS.push(worker);
-  }
-  save('workers',WORKERS);
-  if(worker) pushWorker(worker);
+  const id = document.getElementById('mw-id').value || 'W'+Date.now();
+  const worker = {
+    id,
+    nombre: document.getElementById('mw-nombre').value,
+    email: document.getElementById('mw-email').value,
+    jornada: parseFloat(document.getElementById('mw-jornada').value),
+    pin: document.getElementById('mw-pin').value,
+    role: 'worker', activo: true,
+    color: AVATAR_COLORS[0].color, bg: AVATAR_COLORS[0].bg
+  };
+  const idx = WORKERS.findIndex(w=>w.id===id);
+  if(idx>=0) WORKERS[idx] = worker; else WORKERS.push(worker);
+  save('workers', WORKERS);
+  syncGAS('worker_save', worker);
   closeModal('m-add-worker');
   renderAdminWorkers();
   renderLogin();
-  populateVaAdminWorkers();
-  showToast(id?'Empleado actualizado ✓':'Empleado añadido ✓','t-ok');
 }
 
-function promptDelWorker(id) {
-  const w=getWorker(id);
-  if(!w)return;
-  document.getElementById('del-w-name').textContent=w.nombre;
-  document.getElementById('del-w-id').value=id;
-  openModal('m-del-worker');
-}
-
-function confirmDelWorker() {
-  const id=document.getElementById('del-w-id').value;
-  const w=getWorker(id);
-  if(w){ w.activo=false; pushWorker(w); }
-  save('workers',WORKERS);
-  closeModal('m-del-worker');
-  renderAdminWorkers();
-  renderLogin();
-  populateVaAdminWorkers();
-  showToast('Empleado eliminado','t-warn');
-}
-
-// ── Export ──
-function initExport() {
-  const selE=document.getElementById('exp-emp');
-  selE.innerHTML='<option value="all">Todos los empleados</option>'+
-    getWorkers().map(w=>`<option value="${w.id}">${w.nombre}</option>`).join('');
-  const selM=document.getElementById('exp-mes');
-  selM.innerHTML=MESES.map((m,i)=>`<option value="${i}"${i===new Date().getMonth()?' selected':''}>${m}</option>`).join('');
-  const selA=document.getElementById('exp-anyo');
-  const ay=new Date().getFullYear();
-  selA.innerHTML=[ay-1,ay,ay+1].map(y=>`<option value="${y}"${y===ay?' selected':''}>${y}</option>`).join('');
-}
-
-function getExportData() {
-  const uid=document.getElementById('exp-emp').value;
-  const mes=parseInt(document.getElementById('exp-mes').value);
-  const anyo=parseInt(document.getElementById('exp-anyo').value);
-  return FICHAJES.filter(f=>{
-    const d=new Date(f.fecha);
-    return (uid==='all'||f.userId===uid)&&d.getMonth()===mes&&d.getFullYear()===anyo;
-  }).map(f=>{
-    const w=getWorker(f.userId);
-    return {
-      'EMPLEADO':w?.nombre||f.userId,'FECHA':f.fecha,
-      'ENTRADA':f.entrada,'SALIDA':f.salida,
-      'HORAS TRABAJADAS':f.horas,'HORAS ORDINARIAS':Math.min(f.horas,w?.jornada||8),
-      'HORAS EXTRA':f.horasExtra,'PAUSAS':f.pausas||0
-    };
-  });
-}
-
-function exportXL() {
-  const data=getExportData();
-  if(!data.length){showToast('Sin datos para exportar','t-err');return;}
-  const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.json_to_sheet(data);
-  ws['!cols']=[{wch:20},{wch:12},{wch:10},{wch:10},{wch:16},{wch:16},{wch:12},{wch:8}];
-  XLSX.utils.book_append_sheet(wb,ws,'Registros');
-  const mes=MESES[parseInt(document.getElementById('exp-mes').value)];
-  const anyo=document.getElementById('exp-anyo').value;
-  XLSX.writeFile(wb,`${CFG.EMPRESA}_Fichajes_${mes}_${anyo}.xlsx`);
-  showToast('Excel generado ✓','t-ok');
-}
-
-function exportCSV() {
-  const data=getExportData();
-  if(!data.length){showToast('Sin datos para exportar','t-err');return;}
-  const h=Object.keys(data[0]);
-  const rows=data.map(r=>h.map(k=>`"${r[k]}"`).join(';'));
-  const csv=[h.join(';'),...rows].join('\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  const mes=MESES[parseInt(document.getElementById('exp-mes').value)];
-  const anyo=document.getElementById('exp-anyo').value;
-  a.href=url;a.download=`${CFG.EMPRESA}_Fichajes_${mes}_${anyo}.csv`;a.click();
-  URL.revokeObjectURL(url);
-  showToast('CSV generado ✓','t-ok');
+function renderAdminWorkers() {
+  document.getElementById('a-workers-list').innerHTML = getWorkers().map(w=>`
+    <div class="worker-mgmt-card">
+      <div class="wm-name">${w.nombre}</div>
+      <div class="wm-meta">Jornada: ${w.jornada}h · PIN: ${w.pin}</div>
+    </div>
+  `).join('');
 }
 
 // ════════════════════════════════════════
-//  SYNC GAS
+// UI HELPERS
 // ════════════════════════════════════════
-async function syncGAS(tipo, extra={}) {
-  if(!CFG.GAS_URL)return;
-  try {
-    await fetch(CFG.GAS_URL,{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({tipo,userId:STATE.user.id,nombre:STATE.user.nombre,timestamp:new Date().toISOString(),...extra})
-    });
-  } catch(e){}
-}
-
-// ════════════════════════════════════════
-//  UI HELPERS
-// ════════════════════════════════════════
-function showScr(id) {
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
-}
 function openModal(id){document.getElementById(id).classList.add('on')}
 function closeModal(id){document.getElementById(id).classList.remove('on')}
 
-let _toastTimer;
 function showToast(msg,cls='') {
-  clearTimeout(_toastTimer);
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast '+cls+' show';
-  _toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// Wire up btn-add-w to openAddWorker
-document.querySelector('.btn-add-w').addEventListener('click', openAddWorker);
-
-// ════════════════════════════════════════
-//  PWA
-// ════════════════════════════════════════
-const mani={name:'Fichalili',short_name:'Fichalili',start_url:'.',display:'standalone',
-  background_color:'#080808',theme_color:'#080808',
-  icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23080808'/><text y='.9em' font-size='70' x='15'>⏱</text></svg>",sizes:'192x192',type:'image/svg+xml'}]};
-const mb=new Blob([JSON.stringify(mani)],{type:'application/manifest+json'});
-document.getElementById('pwa-manifest').href=URL.createObjectURL(mb);
-
-// ── NOTIFICACIONES ──
-function checkNotifs(uid) {
-  const notifs = load('notifs_'+uid, []).filter(n=>!n.leida);
-  if(!notifs.length) return;
-  notifs.forEach((n,i) => { setTimeout(()=>showNotifBanner(n), i*3800); });
-  const all = load('notifs_'+uid, []).map(n=>({...n,leida:true}));
-  save('notifs_'+uid, all);
-}
-
-function showNotifBanner(n) {
-  const ok = n.estado==='aprobada';
-  const div = document.createElement('div');
-  div.style.cssText = `position:fixed;top:0;left:0;right:0;z-index:9999;
-    background:${ok?'#0d2e1a':'#2e0d0d'};
-    border-bottom:2px solid ${ok?'rgba(61,220,132,.5)':'rgba(255,82,82,.5)'};
-    padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;
-    animation:notifDown .3s ease-out;`;
-  const a=new Date(n.inicio+'T00:00:00'), b=new Date(n.fin+'T00:00:00');
-  const rango=a.toLocaleDateString('es-ES',{day:'numeric',month:'short'})+
-    (n.inicio!==n.fin?' → '+b.toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'');
-  div.innerHTML=`
-    <div>
-      <div style="font-family:var(--mono);font-size:12px;letter-spacing:.15em;color:${ok?'var(--ok)':'var(--err)'};margin-bottom:5px;text-transform:uppercase">
-        ${ok?'✓ VACACIONES APROBADAS':'✕ SOLICITUD RECHAZADA'}
-      </div>
-      <div style="font-size:16px;font-weight:600;color:var(--txt)">${n.motivo||'Vacaciones'}</div>
-      <div style="font-family:var(--mono);font-size:13px;color:var(--txt2);margin-top:3px">${rango}</div>
-    </div>
-    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--txt3);font-size:26px;cursor:pointer;padding:4px 10px;line-height:1">×</button>
-  `;
-  document.body.appendChild(div);
-  if(!document.querySelector('#notif-style')) {
-    const s=document.createElement('style'); s.id='notif-style';
-    s.textContent='@keyframes notifDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}';
-    document.head.appendChild(s);
-  }
-  setTimeout(()=>{ if(div.parentElement)div.remove(); }, 7000);
-}
-
-// ════════════════════════════════════════
-//  INIT — arranque con sync
-// ════════════════════════════════════════
+// ARRANQUE
 (async () => {
-  showLoader('Iniciando Fichalili...');
-  await syncPull();
-  hideLoader();
   renderLogin();
 })();
 </script>
