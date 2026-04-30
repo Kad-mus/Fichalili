@@ -129,23 +129,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
 .bnav-btn.on{color:var(--acc)}
 .bnav-ico{font-size:22px;line-height:1}
 
-/* ══════════ SECTIONS (within scroll) ══════════ */
-.pad{padding:1rem 1.1rem}
-.sec-lbl{
-  font-family:var(--mono);font-size:12px;letter-spacing:.2em;
-  color:var(--txt3);text-transform:uppercase;margin-bottom:10px
-}
-
-/* ── Cards ── */
-.card{
-  background:var(--s1);border:1px solid var(--bd);
-  border-radius:var(--r);padding:1.1rem;margin-bottom:10px
-}
-.card-sm{
-  background:var(--s2);border:1px solid var(--bd);
-  border-radius:var(--r-sm);padding:.9rem 1rem;margin-bottom:8px
-}
-
 /* ══════════ FICHA HERO ══════════ */
 .hero{
   background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);
@@ -385,12 +368,10 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
     <div class="brand-sub">Selecciona tu usuario</div>
   </div>
   <div class="login-box">
-    <!-- Step 1: elegir usuario -->
     <div class="login-step on" id="ls-users">
       <div class="ls-title">¿Quién eres?</div>
       <div id="user-list"></div>
     </div>
-    <!-- Step 2: biometría -->
     <div class="login-step" id="ls-bio">
       <div class="bio-step">
         <div class="bio-user-name" id="bio-uname"></div>
@@ -508,7 +489,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
       <div class="tab-p on" id="ap-hoy">
         <div class="sgrid">
           <div class="scard"><div class="scard-lbl">DENTRO AHORA</div><div class="scard-val" id="a-dentro">0</div><div class="scard-sub">de <span id="a-total-w">0</span> empleados</div></div>
-          <div class="scard"><div class="scard-lbl">HORAS HOY</div><div class="scard-val c-ok" id="a-horas-hoy">0h</div><div class="scard-sub">acumuladas equipo</div></div>
+          <div class="scard"><div class="scard-lbl">HORAS HOY</div><div class="scard-val c-ok" id="a-horas-hoy">0h</div><div class="scard-sub">equipo</div></div>
           <div class="scard"><div class="scard-lbl">EXTRAS MES</div><div class="scard-val c-warn" id="a-extras">0h</div><div class="scard-sub">total equipo</div></div>
           <div class="scard"><div class="scard-lbl">VAC. PEND.</div><div class="scard-val" id="a-vac-n">0</div><div class="scard-sub">por aprobar</div></div>
         </div>
@@ -553,7 +534,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
           </div>
         </div>
         <button class="btn-exp btn-exp-xl" onclick="exportXL()">↓ EXPORTAR EXCEL (.xlsx)</button>
-        <button class="btn-exp btn-exp-csv" onclick="exportCSV()">↓ EXPORTAR CSV (Inspección Trabajo)</button>
+        <button class="btn-exp btn-exp-csv" onclick="exportCSV()">↓ EXPORTAR CSV</button>
       </div>
     </div>
   </div>
@@ -616,7 +597,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
     <div class="sheet-handle"></div>
     <div class="sheet-title">Eliminar empleado</div>
     <div style="color:var(--txt2);font-size:14px;line-height:1.6;margin-bottom:1.25rem">
-      ¿Eliminar a <strong id="del-w-name"></strong>?
+      ¿Eliminar a <strong id="del-w-name"></strong>? Sus registros se conservarán pero no podrá fichar.
     </div>
     <input type="hidden" id="del-w-id">
     <div class="macts">
@@ -631,7 +612,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 // ════════════════════════════════════════
-// CONFIGURACIÓN (ACTUALIZA TU URL)
+// CONFIGURACIÓN INTEGRADA
 // ════════════════════════════════════════
 const CFG = {
   GAS_URL: 'https://script.google.com/macros/s/AKfycbyy7wlpPoN-PwsBW_5JoO7DIqus6W0Erun7nUbcimD8aL3wTjqDrp06af4pPPZBJDPB/exec',
@@ -652,39 +633,7 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 const DIAS_S = ['L','M','X','J','V','S','D'];
 
 // ════════════════════════════════════════
-// COMUNICACIÓN GAS (ÚNICA VERSIÓN ROBUSTA)
-// ════════════════════════════════════════
-async function syncGAS(tipo, extra = {}) {
-  if (!CFG.GAS_URL) return null;
-  const payload = { tipo, ...extra, userId: STATE.user?.id, nombre: STATE.user?.nombre, timestamp: new Date().toISOString() };
-  
-  try {
-    // Usamos text/plain y no-cors para saltar bloqueos de Google
-    await fetch(CFG.GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
-    });
-    console.log("Sync GAS enviado:", tipo);
-    return { ok: true };
-  } catch (e) {
-    console.error("Error Sync GAS:", e);
-    return null;
-  }
-}
-
-async function gasGet(params) {
-  if (!CFG.GAS_URL) return null;
-  const qs = new URLSearchParams(params).toString();
-  try {
-    const r = await fetch(CFG.GAS_URL + '?' + qs);
-    return await r.json();
-  } catch(e) { return null; }
-}
-
-// ════════════════════════════════════════
-// ALMACENAMIENTO LOCAL
+// ALMACENAMIENTO + SYNC GAS
 // ════════════════════════════════════════
 function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } }
 function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
@@ -699,37 +648,37 @@ function loadJornadas() { JORNADAS = load('jornadas_' + TODAY, {}); }
 function saveJornadas() { save('jornadas_' + TODAY, JORNADAS); }
 loadJornadas();
 
-// ════════════════════════════════════════
-// UTILS
-// ════════════════════════════════════════
-function fDate(d) { return d.toISOString().split('T')[0]; }
-function fTime(d) { return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
-function msToHhMmSs(ms) {
-  const h=Math.floor(ms/3600000), m=Math.floor((ms%3600000)/60000), s=Math.floor((ms%60000)/1000);
-  return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+// ── ÚNICA FUNCIÓN ROBUSTA SYNC GAS (NO-CORS) ──
+async function syncGAS(tipo, extra = {}) {
+  if (!CFG.GAS_URL) return;
+  const payload = {
+    tipo,
+    userId: STATE.user?.id,
+    nombre: STATE.user?.nombre,
+    timestamp: new Date().toISOString(),
+    ...extra
+  };
+  try {
+    await fetch(CFG.GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Evita errores de preflight CORS
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    });
+    console.log("Sync exitoso:", tipo);
+  } catch (e) {
+    console.warn("Sync error:", e);
+  }
 }
-function msToH(ms) { return (ms/3600000).toFixed(1)+'h'; }
-function initials(name) {
-  const p = name.trim().split(' ');
-  return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();
-}
-function getWorker(id) { return WORKERS.find(w=>w.id===id); }
-function getWorkers() { return WORKERS.filter(w=>w.role!=='admin' && w.activo); }
 
-function jornadaMs(j) {
-  if(!j||!j.entrada) return 0;
-  const fin = j.salida || Date.now();
-  let total = fin - j.entrada;
-  (j.pausas||[]).forEach(p=>{ total -= (p.fin||Date.now()) - p.inicio; });
-  return Math.max(0, total);
-}
-
-function extrasMes(uid, mes, anyo) {
-  const w = getWorker(uid);
-  const jNorm = (w?.jornada || CFG.JORNADA_DEFAULT) * 3600000;
-  return FICHAJES
-    .filter(f=>{ const d=new Date(f.fecha); return f.userId===uid && d.getMonth()===mes && d.getFullYear()===anyo; })
-    .reduce((a,f)=>a+Math.max(0,f.duracionMs-jNorm), 0);
+async function gasGet(params) {
+  if (!CFG.GAS_URL) return null;
+  try {
+    const qs = new URLSearchParams(params).toString();
+    const r = await fetch(CFG.GAS_URL + '?' + qs, { redirect: 'follow' });
+    return await r.json();
+  } catch(e) { return null; }
 }
 
 // ════════════════════════════════════════
@@ -740,14 +689,13 @@ let _bioUser = null;
 let _pinValue = '';
 
 function triggerBio() { showPinModal(); }
-
 function showPinModal() {
   if (!document.getElementById('pin-modal')) {
     const div = document.createElement('div');
     div.id = 'pin-modal';
     div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem';
     div.innerHTML = `
-      <div style="font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase">VERIFICAR IDENTIDAD</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase">IDENTIDAD</div>
       <div id="pin-name" style="font-size:18px;font-weight:600;color:var(--txt)"></div>
       <div id="pin-dots" style="display:flex;gap:12px;margin:4px 0">
         <div class="pdot"></div><div class="pdot"></div><div class="pdot"></div><div class="pdot"></div>
@@ -755,18 +703,18 @@ function showPinModal() {
       <style>.pdot{width:14px;height:14px;border-radius:50%;border:2px solid var(--txt3);transition:all .15s}.pdot.fill{background:var(--acc);border-color:var(--acc)}</style>
       <div style="display:grid;grid-template-columns:repeat(3,72px);gap:10px" id="pin-pad"></div>
       <div style="display:flex;gap:10px;margin-top:4px">
-        <button onclick="pinClear()" style="padding:10px 20px;background:none;border:1px solid var(--bd);border-radius:8px;color:var(--txt3);font-family:var(--mono);font-size:12px;cursor:pointer;letter-spacing:.08em">BORRAR</button>
-        <button onclick="cancelPin()" style="padding:10px 20px;background:none;border:1px solid var(--bd);border-radius:8px;color:var(--txt3);font-family:var(--mono);font-size:12px;cursor:pointer;letter-spacing:.08em">CANCELAR</button>
+        <button onclick="pinClear()" style="padding:10px 20px;background:none;border:1px solid var(--bd);border-radius:8px;color:var(--txt3);font-family:var(--mono);font-size:12px;cursor:pointer">BORRAR</button>
+        <button onclick="cancelPin()" style="padding:10px 20px;background:none;border:1px solid var(--bd);border-radius:8px;color:var(--txt3);font-family:var(--mono);font-size:12px;cursor:pointer">SALIR</button>
       </div>
-      <div id="pin-err" style="font-family:var(--mono);font-size:11px;color:var(--err);letter-spacing:.1em;min-height:16px"></div>
+      <div id="pin-err" style="color:var(--err);font-family:var(--mono);font-size:11px"></div>
     `;
     document.body.appendChild(div);
     const pad = div.querySelector('#pin-pad');
     [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n => {
       const btn = document.createElement('button');
       btn.textContent = n;
-      btn.style.cssText = 'width:72px;height:56px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;color:var(--txt);font-family:var(--mono);font-size:20px;cursor:pointer;transition:all .1s';
-      btn.addEventListener('click', () => { if(n==='') return; if(n==='⌫') { pinBackspace(); return; } pinDigit(String(n)); });
+      btn.style.cssText = 'width:72px;height:56px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;color:var(--txt);font-family:var(--mono);font-size:20px;cursor:pointer';
+      btn.addEventListener('click', () => { if(n==='') return; if(n==='⌫') { _pinValue = _pinValue.slice(0,-1); updatePinDots(); return; } if(_pinValue.length<4) _pinValue += n; updatePinDots(); if(_pinValue.length===4) setTimeout(checkPin, 150); });
       pad.appendChild(btn);
     });
   }
@@ -776,17 +724,9 @@ function showPinModal() {
   updatePinDots();
   document.getElementById('pin-modal').style.display = 'flex';
 }
-
-function pinDigit(d) {
-  if (_pinValue.length >= 4) return;
-  _pinValue += d;
-  updatePinDots();
-  if (_pinValue.length === 4) setTimeout(checkPin, 150);
-}
-function pinBackspace() { _pinValue = _pinValue.slice(0,-1); updatePinDots(); }
-function pinClear() { _pinValue = ''; updatePinDots(); }
-function cancelPin() { document.getElementById('pin-modal').style.display = 'none'; showToast('Cancelado','t-warn'); }
 function updatePinDots() { document.querySelectorAll('.pdot').forEach((d,i) => d.classList.toggle('fill', i < _pinValue.length)); }
+function pinClear() { _pinValue = ''; updatePinDots(); }
+function cancelPin() { document.getElementById('pin-modal').style.display = 'none'; }
 function checkPin() {
   if (_pinValue === (_bioUser?.pin || '1234')) {
     document.getElementById('pin-modal').style.display = 'none';
@@ -796,63 +736,32 @@ function checkPin() {
     _pinValue = ''; updatePinDots();
   }
 }
-
-function requireBio(user, cb) {
-  _bioUser = user; _bioCb = cb;
-  document.getElementById('bio-uname').textContent = user.nombre;
-  document.getElementById('ls-users').classList.remove('on');
-  document.getElementById('ls-bio').classList.add('on');
-}
-
+function requireBio(user, cb) { _bioUser = user; _bioCb = cb; document.getElementById('bio-uname').textContent = user.nombre; document.getElementById('ls-users').classList.remove('on'); document.getElementById('ls-bio').classList.add('on'); }
 function backToUsers() { document.getElementById('ls-bio').classList.remove('on'); document.getElementById('ls-users').classList.add('on'); }
 
 // ════════════════════════════════════════
-// LÓGICA DE NAVEGACIÓN Y RENDER
+// LÓGICA CORE APP
 // ════════════════════════════════════════
-const STATE = {
-  user: null,
-  wPage: 'fichar',
-  wMes: new Date().getMonth(),
-  wAnyo: new Date().getFullYear(),
-  aMes: new Date().getMonth(),
-  aAnyo: new Date().getFullYear(),
-};
+const STATE = { user: null, wPage: 'fichar' };
+
+function selectUser(uid) {
+  const user = getWorker(uid);
+  if (!user) return;
+  requireBio(user, () => {
+    STATE.user = user;
+    if (user.role==='admin') initAdmin(); else initWorker();
+  });
+}
 
 function renderLogin() {
   const ul = document.getElementById('user-list');
   ul.innerHTML = WORKERS.filter(w=>w.activo).map(u=>`
     <button class="user-btn" onclick="selectUser('${u.id}')">
       <div class="ava" style="background:${u.bg};color:${u.color}">${initials(u.nombre)}</div>
-      <div><div>${u.nombre}</div><div class="u-role">${u.role==='admin'?'ADMINISTRADOR':'EMPLEADO'}</div></div>
-    </button>
-  `).join('');
+      <div><div>${u.nombre}</div><div class="u-role">${u.role.toUpperCase()}</div></div>
+    </button>`).join('');
 }
 
-function selectUser(uid) {
-  const user = getWorker(uid);
-  if (!user) return;
-  requireBio(user, ()=>{
-    STATE.user = user;
-    if (user.role==='admin') initAdmin();
-    else initWorker();
-  });
-}
-
-function logout() {
-  STATE.user = null;
-  backToUsers();
-  showScr('s-login');
-  renderLogin();
-}
-
-function showScr(id) {
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
-}
-
-// ════════════════════════════════════════
-// APP TRABAJADOR
-// ════════════════════════════════════════
 function initWorker() {
   showScr('s-worker');
   const u = STATE.user;
@@ -868,6 +777,8 @@ function tickClock() {
   const n = new Date();
   const el = document.getElementById('w-clock');
   if (el) el.textContent = n.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const de = document.getElementById('w-date');
+  if (de) de.textContent = n.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
 }
 
 function renderWorkerStatus() {
@@ -887,124 +798,104 @@ function renderWorkerStatus() {
   } else {
     btnM.className='btn-main btn-out'; btnM.textContent='⏹ FICHAR SALIDA'; btnM.onclick=doSalida;
     document.getElementById('w-jtimer-row').style.display='block';
-    document.getElementById('w-btn-pause').style.display='block';
+    document.getElementById('w-btn-pause').style.display = (estado==='pausa'?'none':'block');
+    if(estado==='pausa') {
+       btnM.className='btn-main btn-resume'; btnM.textContent='▶ REANUDAR'; btnM.onclick=togglePausa;
+    }
   }
 }
 
 function doFichar() {
-  requireBio(STATE.user, ()=>{
+  requireBio(STATE.user, () => {
     const uid = STATE.user.id;
     JORNADAS[uid] = { entrada:Date.now(), pausas:[], estado:'dentro' };
     saveJornadas();
     renderWorkerStatus();
     syncGAS('entrada');
-    showToast('Entrada registrada','t-ok');
+    showToast('Entrada registrada ✓','t-ok');
   });
 }
 
 function doSalida() {
-  requireBio(STATE.user, ()=>{
+  requireBio(STATE.user, () => {
     const uid = STATE.user.id;
     const j = JORNADAS[uid];
     j.salida = Date.now();
     const durMs = jornadaMs(j);
-    const w = getWorker(uid);
-    const horas = durMs/3600000;
     const fichaje = {
-      id: 'F'+Date.now(), userId:uid, nombre:w.nombre, fecha:TODAY,
+      id: 'F'+Date.now(), userId:uid, nombre:STATE.user.nombre, fecha:TODAY,
       entrada:fTime(new Date(j.entrada)), salida:fTime(new Date(j.salida)),
-      horas: +horas.toFixed(2),
-      horasExtra: +Math.max(0, horas - w.jornada).toFixed(2),
+      horas: +(durMs/3600000).toFixed(2),
       pausas: j.pausas.length
     };
+    fichaje.horasExtra = +Math.max(0, fichaje.horas - (STATE.user.jornada||8)).toFixed(2);
     FICHAJES.push(fichaje);
     save('fichajes', FICHAJES);
     delete JORNADAS[uid];
     saveJornadas();
     renderWorkerStatus();
     syncGAS('salida', fichaje);
-    showToast('Salida registrada','t-ok');
+    showToast('Salida registrada ✓','t-ok');
   });
 }
 
 function togglePausa() {
   const uid=STATE.user.id; const j=JORNADAS[uid];
-  if(j.estado==='dentro') {
-    j.pausas.push({inicio:Date.now()}); j.estado='pausa';
-  } else {
-    j.pausas[j.pausas.length-1].fin = Date.now(); j.estado='dentro';
-  }
+  if(j.estado==='dentro') { j.pausas.push({inicio:Date.now()}); j.estado='pausa'; } 
+  else { j.pausas[j.pausas.length-1].fin = Date.now(); j.estado='dentro'; }
   saveJornadas(); renderWorkerStatus();
 }
 
-function wNav(p) {
-  ['fichar','historial','vacaciones'].forEach(page=>{
-    document.getElementById('wp-'+page).style.display = p===page?'block':'none';
-    document.getElementById('wb-'+page).classList.toggle('on', p===page);
-  });
-}
+function logout() { STATE.user=null; backToUsers(); showScr('s-login'); renderLogin(); }
+function wNav(p) { ['fichar','historial','vacaciones'].forEach(pg=>{ document.getElementById('wp-'+pg).style.display = (p===pg?'block':'none'); document.getElementById('wb-'+pg).classList.toggle('on',p===pg); }); }
+function showScr(id) { document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on')); document.getElementById(id).classList.add('on'); }
+function openModal(id){document.getElementById(id).classList.add('on')}
+function closeModal(id){document.getElementById(id).classList.remove('on')}
 
-// ════════════════════════════════════════
-// APP ADMIN
-// ════════════════════════════════════════
-function initAdmin() {
-  showScr('s-admin');
-  renderAdminWorkers();
-  aTab('hoy');
-}
+function fTime(d) { return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
+function initials(name) { return name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
+function getWorker(id) { return WORKERS.find(w=>w.id===id); }
+function getWorkers() { return WORKERS.filter(w=>w.role!=='admin' && w.activo); }
+function jornadaMs(j) { let t = (j.salida||Date.now()) - j.entrada; (j.pausas||[]).forEach(p=>t -= (p.fin||Date.now()) - p.inicio); return Math.max(0,t); }
 
-function aTab(t) {
-  document.querySelectorAll('.tab-p').forEach(p=>p.classList.remove('on'));
-  document.getElementById('ap-'+t).classList.add('on');
-}
+function showToast(msg,cls='') { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+cls+' show'; setTimeout(()=>t.classList.remove('show'),2800); }
 
-function openAddWorker() { openModal('m-add-worker'); }
+// ── ADMIN ──
+function initAdmin() { showScr('s-admin'); renderAdminWorkers(); aTab('hoy'); }
+function aTab(t) { document.querySelectorAll('.tab-p').forEach(p=>p.classList.remove('on')); document.getElementById('ap-'+t).classList.add('on'); document.querySelectorAll('.tab').forEach(btn=>btn.classList.toggle('on', btn.textContent.toLowerCase()===t)); }
 
 function saveWorker() {
   const id = document.getElementById('mw-id').value || 'W'+Date.now();
   const worker = {
-    id,
-    nombre: document.getElementById('mw-nombre').value,
-    email: document.getElementById('mw-email').value,
+    id, nombre: document.getElementById('mw-nombre').value,
     jornada: parseFloat(document.getElementById('mw-jornada').value),
-    pin: document.getElementById('mw-pin').value,
-    role: 'worker', activo: true,
+    pin: document.getElementById('mw-pin').value, activo: true, role: 'worker',
     color: AVATAR_COLORS[0].color, bg: AVATAR_COLORS[0].bg
   };
   const idx = WORKERS.findIndex(w=>w.id===id);
-  if(idx>=0) WORKERS[idx] = worker; else WORKERS.push(worker);
+  if(idx>=0) WORKERS[idx]=worker; else WORKERS.push(worker);
   save('workers', WORKERS);
   syncGAS('worker_save', worker);
   closeModal('m-add-worker');
-  renderAdminWorkers();
-  renderLogin();
+  renderAdminWorkers(); renderLogin();
 }
 
 function renderAdminWorkers() {
   document.getElementById('a-workers-list').innerHTML = getWorkers().map(w=>`
     <div class="worker-mgmt-card">
-      <div class="wm-name">${w.nombre}</div>
-      <div class="wm-meta">Jornada: ${w.jornada}h · PIN: ${w.pin}</div>
-    </div>
-  `).join('');
+       <div class="wm-name">${w.nombre}</div>
+       <div class="wm-meta">Jornada: ${w.jornada}h · PIN: ${w.pin}</div>
+    </div>`).join('');
 }
 
-// ════════════════════════════════════════
-// UI HELPERS
-// ════════════════════════════════════════
-function openModal(id){document.getElementById(id).classList.add('on')}
-function closeModal(id){document.getElementById(id).classList.remove('on')}
-
-function showToast(msg,cls='') {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast '+cls+' show';
-  setTimeout(()=>t.classList.remove('show'),2800);
+function openAddWorker() {
+  document.getElementById('mw-id').value = '';
+  document.getElementById('mw-nombre').value = '';
+  openModal('m-add-worker');
 }
 
-// ARRANQUE
-(async () => {
-  renderLogin();
-})();
+// INICIO
+renderLogin();
 </script>
 </body>
 </html>
