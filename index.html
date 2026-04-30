@@ -681,27 +681,30 @@ function loadJornadas() { JORNADAS = load('jornadas_' + TODAY, {}); }
 function saveJornadas() { save('jornadas_' + TODAY, JORNADAS); }
 loadJornadas();
 
-// ── GAS fetch helpers ──
+// ── GAS fetch helpers (CORS-safe) ──
 async function gasGet(params) {
   if (!CFG.GAS_URL) return null;
   try {
     const qs = new URLSearchParams(params).toString();
-    const r = await fetch(CFG.GAS_URL + '?' + qs);
-    const d = await r.json();
-    return d.ok ? d : null;
-  } catch(e) { return null; }
+    // GET no dispara preflight → funciona sin CORS
+    const r = await fetch(CFG.GAS_URL + '?' + qs, { redirect: 'follow' });
+    const text = await r.text();
+    try { const d = JSON.parse(text); return d.ok ? d : null; } catch { return null; }
+  } catch(e) { console.warn('GAS GET error:', e); return null; }
 }
 
 async function gasPost(body) {
   if (!CFG.GAS_URL) return null;
   try {
-    const r = await fetch(CFG.GAS_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+    // no-cors evita el preflight pero no podemos leer la respuesta — no importa para writes
+    await fetch(CFG.GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' }, // text/plain no dispara preflight
       body: JSON.stringify(body)
     });
-    return await r.json();
-  } catch(e) { return null; }
+    return { ok: true };
+  } catch(e) { console.warn('GAS POST error:', e); return null; }
 }
 
 // ── Pantalla de carga ──
