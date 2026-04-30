@@ -228,11 +228,13 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:16p
 .btn-resume{background:var(--ok-d);color:var(--ok);border:1px solid rgba(0,212,170,0.3)}
 
 .jornada-row{
-  margin-top:1rem;font-size:13px;font-weight:700;color:var(--txt2);
+  margin-top:1rem;font-size:13px;font-weight:800;color:var(--txt2);
+  background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);
+  border-radius:12px;padding:10px 16px;
 }
 .jornada-row .timer-val{
-  font-family:var(--mono);font-size:22px;font-weight:500;color:var(--ok);
-  display:block;margin-top:4px;
+  font-family:var(--mono);font-size:30px;font-weight:500;color:var(--ok);
+  display:block;margin-top:4px;letter-spacing:.02em;
 }
 
 /* ════════════ QUICK GRID ════════════ */
@@ -313,11 +315,11 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:16p
   color:var(--txt2);font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;
 }
 .cal-nav-btn:hover{border-color:var(--acc);color:var(--acc)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
 .cal-dow{font-size:11px;font-weight:800;color:var(--txt3);text-align:center;padding:5px 0;text-transform:uppercase;letter-spacing:.04em}
 .cal-day{
-  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;
+  height:38px;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;
   transition:all .15s;border:1px solid transparent;position:relative;
 }
 .cal-day:hover:not(.cal-empty):not(.cal-vac-other){
@@ -534,7 +536,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:16p
       <div class="clock" id="w-clock">00:00</div>
       <div class="clock-date" id="w-date"></div>
       <div class="badge b-off" id="w-badge"><div class="dot"></div><span id="w-badge-txt">FUERA</span></div>
-      <button class="btn-main btn-in" id="w-btn-main" onclick="doFichar()">⚡ Fichar Entrada</button>
+      <button class="btn-main btn-in" id="w-btn-main">⚡ Fichar Entrada</button>
       <div class="jornada-row" id="w-jtimer-row" style="display:none">
         Tiempo trabajado:<span class="timer-val" id="w-jtimer">0:00:00</span>
       </div>
@@ -938,6 +940,7 @@ let _bioCb=null,_bioUser=null;
 
 function buildPinPad(){
   const pad=document.getElementById('pin-pad');
+  if(!pad)return;
   pad.innerHTML='';
   [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n=>{
     const btn=document.createElement('button');
@@ -945,23 +948,107 @@ function buildPinPad(){
     btn.textContent=n;
     if(n!==''){
       btn.addEventListener('click',()=>{
-        if(n==='⌫')pinBackspace();
-        else pinDigit(String(n));
+        if(n==='⌫')pinModBackspace();
+        else pinModDigit(String(n));
       });
     }
     pad.appendChild(btn);
   });
 }
 
+
 function requireBio(user,cb){
   _bioUser=user;_bioCb=cb;
   STATE._pinValue='';
-  document.getElementById('bio-uname').textContent=user.nombre;
-  document.getElementById('pin-err').textContent='';
-  updatePinDots();
-  document.getElementById('ls-users').classList.remove('on');
-  document.getElementById('ls-bio').classList.add('on');
+  // Use standalone PIN modal (works from any screen)
+  showPinModal(user.nombre);
 }
+
+function showPinModal(nombre){
+  let modal=document.getElementById('pin-modal-overlay');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='pin-modal-overlay';
+    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
+    modal.innerHTML=`
+      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(233,69,96,0.3);border-radius:24px;padding:2rem 1.5rem;width:300px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.6)">
+        <div style="font-size:13px;font-weight:800;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem">VERIFICAR IDENTIDAD</div>
+        <div id="pmod-name" style="font-size:20px;font-weight:900;color:var(--txt);margin-bottom:1.25rem"></div>
+        <div id="pmod-dots" style="display:flex;gap:14px;justify-content:center;margin-bottom:1rem">
+          <div class="pdot2"></div><div class="pdot2"></div><div class="pdot2"></div><div class="pdot2"></div>
+        </div>
+        <div id="pmod-err" style="font-size:13px;font-weight:800;color:var(--err);min-height:18px;margin-bottom:.75rem"></div>
+        <div id="pmod-pad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem"></div>
+        <button onclick="cancelPinModal()" style="background:none;border:1px solid var(--bd);border-radius:12px;padding:10px 24px;color:var(--txt3);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;width:100%">Cancelar</button>
+      </div>
+      <style>.pdot2{width:16px;height:16px;border-radius:50%;border:2px solid var(--txt3);transition:all .2s;display:inline-block}.pdot2.fill{background:var(--acc);border-color:var(--acc);transform:scale(1.15)}</style>
+    `;
+    // Build numpad
+    const pad=modal.querySelector('#pmod-pad');
+    [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n=>{
+      const btn=document.createElement('button');
+      btn.textContent=n;
+      btn.style.cssText=`padding:15px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:var(--txt);font-family:var(--sans);font-size:20px;font-weight:700;cursor:pointer;transition:all .15s;${n===''?'background:none;border-color:transparent;cursor:default':''}`;
+      if(n!==''){
+        btn.addEventListener('click',()=>{
+          btn.style.background='rgba(233,69,96,0.25)';
+          setTimeout(()=>btn.style.background=n===''?'none':'rgba(255,255,255,0.05)',150);
+          if(n==='⌫')pinModBackspace();else pinModDigit(String(n));
+        });
+      }
+      pad.appendChild(btn);
+    });
+    document.body.appendChild(modal);
+  }
+  document.getElementById('pmod-name').textContent=nombre;
+  document.getElementById('pmod-err').textContent='';
+  STATE._pinValue='';
+  updatePinModalDots();
+  modal.style.display='flex';
+}
+
+function hidePinModal(){
+  const m=document.getElementById('pin-modal-overlay');
+  if(m)m.style.display='none';
+}
+
+function cancelPinModal(){
+  hidePinModal();
+  _bioCb=null;_bioUser=null;STATE._pinValue='';
+  showToast('Cancelado','t-warn');
+}
+
+function pinModDigit(d){
+  if(STATE._pinValue.length>=4)return;
+  STATE._pinValue+=d;updatePinModalDots();
+  if(STATE._pinValue.length===4)setTimeout(checkPinModal,130);
+}
+
+function pinModBackspace(){
+  STATE._pinValue=STATE._pinValue.slice(0,-1);updatePinModalDots();
+}
+
+function updatePinModalDots(){
+  document.querySelectorAll('.pdot2').forEach((dot,i)=>dot.classList.toggle('fill',i<STATE._pinValue.length));
+  // Also update login screen dots if visible
+  document.querySelectorAll('.pdot').forEach((dot,i)=>dot.classList.toggle('fill',i<STATE._pinValue.length));
+}
+
+function checkPinModal(){
+  const correct=_bioUser?.pin||'1234';
+  if(STATE._pinValue===correct){
+    const cb=_bioCb;_bioCb=null;STATE._pinValue='';
+    hidePinModal();
+    if(cb)cb();
+  }else{
+    const err=document.getElementById('pmod-err');
+    if(err)err.textContent='PIN incorrecto';
+    STATE._pinValue='';updatePinModalDots();
+    setTimeout(()=>{const e=document.getElementById('pmod-err');if(e)e.textContent='';},1400);
+  }
+}
+
+
 
 function backToUsers(){
   _bioCb=null;_bioUser=null;STATE._pinValue='';
@@ -1056,19 +1143,31 @@ function renderWorkerStatus(){
   const jrow=document.getElementById('w-jtimer-row');
   const pbtn=document.getElementById('w-btn-pause');
 
+  // Remove old listeners by cloning
+  const newBtn=btnM.cloneNode(false);
+  btnM.parentNode.replaceChild(newBtn,btnM);
+  const btn=document.getElementById('w-btn-main');
+
   if(estado==='fuera'){
     badge.className='badge b-off';btxt.textContent='FUERA';
-    btnM.className='btn-main btn-in';btnM.textContent='⚡ Fichar Entrada';btnM.onclick=doFichar;
+    btn.className='btn-main btn-in';
+    btn.innerHTML='⚡ Fichar Entrada';
+    btn.addEventListener('click',doFichar);
     jrow.style.display='none';pbtn.style.display='none';
     clearInterval(STATE._jornadaInt);
   }else if(estado==='dentro'){
     badge.className='badge b-on';btxt.textContent='EN JORNADA';
-    btnM.className='btn-main btn-out';btnM.textContent='⏹ Fichar Salida';btnM.onclick=doSalida;
-    jrow.style.display='block';pbtn.style.display='block';pbtn.textContent='⏸ Pausa';pbtn.onclick=togglePausa;
+    btn.className='btn-main btn-out';
+    btn.innerHTML='⏹ Fichar Salida';
+    btn.addEventListener('click',doSalida);
+    jrow.style.display='block';pbtn.style.display='block';
+    pbtn.textContent='⏸ Pausa';pbtn.onclick=togglePausa;
     startJornadaTimer();
   }else if(estado==='pausa'){
     badge.className='badge b-pause';btxt.textContent='EN PAUSA';
-    btnM.className='btn-main btn-resume';btnM.textContent='▶ Reanudar';btnM.onclick=togglePausa;
+    btn.className='btn-main btn-resume';
+    btn.innerHTML='▶ Reanudar Jornada';
+    btn.addEventListener('click',togglePausa);
     jrow.style.display='block';pbtn.style.display='none';
     startJornadaTimer();
   }
@@ -1076,10 +1175,14 @@ function renderWorkerStatus(){
 
 function startJornadaTimer(){
   clearInterval(STATE._jornadaInt);
+  // Update immediately
+  const j=JORNADAS[STATE.user?.id];
+  const el=document.getElementById('w-jtimer');
+  if(el)el.textContent=msToHMS(jornadaMs(j));
   STATE._jornadaInt=setInterval(()=>{
-    const j=JORNADAS[STATE.user?.id];
-    const el=document.getElementById('w-jtimer');
-    if(el)el.textContent=msToHMS(jornadaMs(j));
+    const j2=JORNADAS[STATE.user?.id];
+    const el2=document.getElementById('w-jtimer');
+    if(el2)el2.textContent=msToHMS(jornadaMs(j2));
   },1000);
 }
 
