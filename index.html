@@ -582,75 +582,135 @@ async function tryBioVerify(user){
   }catch(e){return e.name==='NotAllowedError'?false:null;}
 }
 
-// ── PIN STATE ──
+// ── PIN / AUTH ──
 let _bioCb=null,_bioUser=null,_pinVal='';
 
 function requireBio(user,cb){
   _bioUser=user;_bioCb=cb;_pinVal='';
+  // En móvil con biometría registrada, intentar primero
   if(isMobile()&&hasBio(user.id)){
     showToast('🔐 Verificando identidad…','');
     tryBioVerify(user).then(r=>{
-      if(r===true){const c=_bioCb;_bioCb=null;c();}
+      if(r===true){const c=_bioCb;_bioCb=null;if(c)c();}
       else if(r===false){showToast('Autenticación cancelada','t-warn');_bioCb=null;}
-      else showPinModal(user.nombre);
+      else{_pinVal='';showPinScreen(user.nombre);}
     });
-  } else {
-    showPinModal(user.nombre);
+    return;
   }
+  _pinVal='';showPinScreen(user.nombre);
 }
 
-function showPinModal(nombre){
-  let m=document.getElementById('pin-modal');
+function showPinScreen(nombre){
+  // Si estamos en login, mostrar ls-bio
+  if(document.getElementById('s-login').classList.contains('on')){
+    document.getElementById('bio-uname').textContent=nombre;
+    document.getElementById('pin-err').textContent='';
+    document.getElementById('ls-users').style.display='none';
+    document.getElementById('ls-bio').style.display='block';
+    updatePinDots();
+    return;
+  }
+  // Si estamos en app (fichaje), usar overlay
+  showPinOverlay(nombre);
+}
+
+function showPinOverlay(nombre){
+  let m=document.getElementById('pin-overlay');
   if(!m){
-    m=document.createElement('div');m.id='pin-modal';
-    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
-    m.innerHTML=`<div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(233,69,96,.3);border-radius:24px;padding:2rem 1.5rem;width:300px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6)">
-      <div style="font-size:13px;font-weight:800;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem">VERIFICAR IDENTIDAD</div>
-      <div id="pm-name" style="font-size:20px;font-weight:900;color:var(--txt);margin-bottom:1.25rem"></div>
-      <div id="pm-dots" style="display:flex;gap:14px;justify-content:center;margin-bottom:1rem">
-        <div class="pdot2"></div><div class="pdot2"></div><div class="pdot2"></div><div class="pdot2"></div>
-      </div>
-      <div id="pm-err" style="font-size:13px;font-weight:800;color:var(--err);min-height:18px;margin-bottom:.75rem"></div>
-      <div id="pm-pad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem"></div>
-      <button onclick="cancelPin()" style="background:none;border:1px solid var(--bd);border-radius:12px;padding:10px 24px;color:var(--txt3);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;width:100%">Cancelar</button>
-      </div>
-      <style>.pdot2{width:16px;height:16px;border-radius:50%;border:2px solid var(--txt3);transition:all .2s;display:inline-block}.pdot2.fill{background:var(--acc);border-color:var(--acc);transform:scale(1.15)}</style>`;
-    const pad=m.querySelector('#pm-pad');
-    [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n=>{
-      const val=n;
+    m=document.createElement('div');
+    m.id='pin-overlay';
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9998;display:flex;align-items:center;justify-content:center';
+    m.innerHTML=
+      '<div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(233,69,96,.3);border-radius:24px;padding:2rem 1.5rem;width:290px;text-align:center">'+
+      '<div style="font-size:12px;font-weight:800;color:#565670;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem">VERIFICAR IDENTIDAD</div>'+
+      '<div id="po-name" style="font-size:19px;font-weight:900;color:#eaeaea;margin-bottom:1.1rem"></div>'+
+      '<div id="po-dots" style="display:flex;gap:14px;justify-content:center;margin-bottom:.75rem">'+
+        '<div class="od"></div><div class="od"></div><div class="od"></div><div class="od"></div>'+
+      '</div>'+
+      '<div id="po-err" style="font-size:13px;font-weight:800;color:#e94560;min-height:18px;margin-bottom:.75rem"></div>'+
+      '<div id="po-pad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem"></div>'+
+      '<button id="po-cancel" style="background:none;border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:10px 24px;color:#565670;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;width:100%">Cancelar</button>'+
+      '</div>'+
+      '<style>.od{width:16px;height:16px;border-radius:50%;border:2px solid #565670;display:inline-block;transition:all .2s}.od.fill{background:#e94560;border-color:#e94560;transform:scale(1.15)}</style>';
+    // Build numpad
+    const pad=m.querySelector('#po-pad');
+    [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(function(val){
       const b=document.createElement('button');
-      b.textContent=val;b.style.cssText=`padding:15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:var(--txt);font-family:var(--sans);font-size:20px;font-weight:700;cursor:pointer;transition:all .15s;${val===''?'background:none;border-color:transparent;cursor:default':''}`;
-      if(val!==''&&val!=='⌫')b.addEventListener('click',()=>{b.style.background='rgba(233,69,96,.25)';setTimeout(()=>b.style.background='rgba(255,255,255,.05)',150);pinAdd(String(val));});
-      if(val==='⌫')b.addEventListener('click',()=>pinDel());
+      b.textContent=val===''?'':val;
+      b.style.cssText='padding:15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#eaeaea;font-family:inherit;font-size:20px;font-weight:700;cursor:pointer;transition:background .15s'+(val===''?';background:none;border-color:transparent;cursor:default':'');
+      if(val==='⌫'){b.addEventListener('click',function(){pinDel();});}
+      else if(val!==''){
+        (function(v){b.addEventListener('click',function(){pinAdd(String(v));});})(val);
+      }
       pad.appendChild(b);
+    });
+    m.querySelector('#po-cancel').addEventListener('click',function(){
+      hidePinOverlay();_bioCb=null;_bioUser=null;_pinVal='';showToast('Cancelado','t-warn');
     });
     document.body.appendChild(m);
   }
-  document.getElementById('pm-name').textContent=nombre;
-  document.getElementById('pm-err').textContent='';
+  m.querySelector('#po-name').textContent=nombre;
+  m.querySelector('#po-err').textContent='';
   _pinVal='';updatePinDots();
   m.style.display='flex';
 }
 
-const hidePinModal=()=>{const m=document.getElementById('pin-modal');if(m)m.style.display='none'};
-const cancelPin=()=>{hidePinModal();_bioCb=null;_bioUser=null;_pinVal='';showToast('Cancelado','t-warn')};
-const pinAdd=d=>{if(_pinVal.length>=4)return;_pinVal+=d;updatePinDots();if(_pinVal.length===4)setTimeout(checkPin,130)};
-const pinDel=()=>{_pinVal=_pinVal.slice(0,-1);updatePinDots()};
-const updatePinDots=()=>{
-  document.querySelectorAll('.pdot2').forEach((d,i)=>d.classList.toggle('fill',i<_pinVal.length));
-  document.querySelectorAll('#pin-dots .pdot').forEach((d,i)=>d.classList.toggle('fill',i<_pinVal.length));
-};
+function hidePinOverlay(){
+  const m=document.getElementById('pin-overlay');
+  if(m)m.style.display='none';
+}
+
+function backToUsers(){
+  _bioCb=null;_bioUser=null;_pinVal='';
+  document.getElementById('ls-bio').style.display='none';
+  document.getElementById('ls-users').style.display='block';
+}
+
+function cancelPin(){
+  backToUsers();showToast('Cancelado','t-warn');
+}
+
+function pinAdd(d){
+  if(_pinVal.length>=4)return;
+  _pinVal+=d;updatePinDots();
+  if(_pinVal.length===4)setTimeout(checkPin,130);
+}
+function pinDel(){_pinVal=_pinVal.slice(0,-1);updatePinDots();}
+
+function updatePinDots(){
+  // Login screen dots
+  document.querySelectorAll('#pin-dots .pdot').forEach(function(dot,i){dot.classList.toggle('fill',i<_pinVal.length);});
+  // Overlay dots
+  document.querySelectorAll('.od').forEach(function(dot,i){dot.classList.toggle('fill',i<_pinVal.length);});
+}
 
 function checkPin(){
   if(_pinVal===(_bioUser?.pin||'1234')){
-    const user=_bioUser,cb=_bioCb;_bioCb=null;_pinVal='';hidePinModal();
-    if(isMobile()&&!hasBio(user.id))tryBioRegister(user).then(ok=>{if(ok)showToast('🔐 Huella/Face ID activado','t-ok')});
+    const user=_bioUser,cb=_bioCb;
+    _bioCb=null;_pinVal='';
+    hidePinOverlay();
+    // Volver a users en login
+    document.getElementById('ls-bio').style.display='none';
+    document.getElementById('ls-users').style.display='block';
+    // Registrar biometría en móvil
+    if(isMobile()&&!hasBio(user.id)){
+      tryBioRegister(user).then(function(ok){if(ok)showToast('🔐 Huella/Face ID activado','t-ok');});
+    }
     if(cb)cb();
   } else {
-    const e=document.getElementById('pm-err');if(e)e.textContent='PIN incorrecto';
-    _pinVal='';updatePinDots();setTimeout(()=>{const e=document.getElementById('pm-err');if(e)e.textContent=''},1400);
+    // PIN incorrecto
+    const eL=document.getElementById('pin-err');
+    const eO=document.getElementById('po-err');
+    if(eL)eL.textContent='PIN incorrecto';
+    if(eO)eO.textContent='PIN incorrecto';
+    _pinVal='';updatePinDots();
+    setTimeout(function(){
+      const eL=document.getElementById('pin-err');const eO=document.getElementById('po-err');
+      if(eL)eL.textContent='';if(eO)eO.textContent='';
+    },1400);
   }
 }
+
 
 // ── STATE ──
 const S={user:null,wPage:'fichar',wMes:new Date().getMonth(),wAnyo:new Date().getFullYear(),aMes:new Date().getMonth(),aAnyo:new Date().getFullYear(),calMes:new Date().getMonth(),calAnyo:new Date().getFullYear(),calS:null,calE:null,_ck:null,_jt:null,_ai:null,mwCol:0};
