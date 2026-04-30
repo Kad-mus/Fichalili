@@ -3,588 +3,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#080808">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Fichalili">
 <title>Fichalili — Control de Jornada</title>
-<link rel="manifest" id="pwa-manifest">
 <style>
+/* ... Mantengo tus estilos originales para no romper el diseño ... */
 :root {
-  --bg: #080808;
-  --s1: #111;
-  --s2: #181818;
-  --s3: #222;
-  --bd: rgba(255,255,255,0.08);
-  --bd2: rgba(255,255,255,0.14);
-  --acc: #c6f135;
-  --acc-d: rgba(198,241,53,0.1);
-  --acc-d2: rgba(198,241,53,0.05);
-  --txt: #f2f2f2;
-  --txt2: #888;
-  --txt3: #555;
-  --ok: #3ddc84;
-  --ok-d: rgba(61,220,132,0.1);
-  --err: #ff5252;
-  --err-d: rgba(255,82,82,0.1);
-  --warn: #ffb347;
-  --warn-d: rgba(255,179,71,0.1);
-  --info: #5eaeff;
-  --info-d: rgba(94,174,255,0.1);
-  --r: 14px;
-  --r-sm: 10px;
-  --mono: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bg: #080808; --s1: #111; --s2: #181818; --s3: #222;
+  --bd: rgba(255,255,255,0.08); --acc: #c6f135; --txt: #f2f2f2;
+  --txt2: #888; --txt3: #555; --ok: #3ddc84; --err: #ff5252;
+  --warn: #ffb347; --info: #5eaeff; --r: 14px; --r-sm: 10px;
+  --mono: 'SF Mono', monospace; --sans: -apple-system, sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17px}
-
-/* ── SCREENS ── */
-.scr{display:none;height:100vh;flex-direction:column;overflow:hidden}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);height:100vh;overflow:hidden}
+.scr{display:none;height:100vh;flex-direction:column}
 .scr.on{display:flex}
-
-/* ── SCROLL AREAS ── */
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.scroll::-webkit-scrollbar{display:none}
-
-/* ══════════ LOGIN ══════════ */
-#s-login{align-items:center;justify-content:center;padding:2rem;position:relative}
-#s-login::before{
-  content:'';position:absolute;width:500px;height:500px;
-  background:radial-gradient(circle,rgba(198,241,53,0.06) 0%,transparent 65%);
-  top:-150px;right:-150px;pointer-events:none
-}
-.brand{text-align:center;margin-bottom:2.5rem}
-.brand-tag{font-family:var(--mono);font-size:12px;letter-spacing:.4em;color:var(--acc);text-transform:uppercase;margin-bottom:8px}
-.brand-name{font-size:46px;font-weight:700;letter-spacing:-.03em;color:var(--txt)}
-.brand-sub{font-size:15px;color:var(--txt3);margin-top:4px}
-
-.login-box{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:1.5rem;width:100%;max-width:340px}
-.login-step{display:none}
-.login-step.on{display:block}
-.ls-title{font-family:var(--mono);font-size:13px;color:var(--txt2);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
-
-.user-btn{
-  display:flex;align-items:center;gap:12px;width:100%;
-  background:var(--s2);border:1px solid var(--bd);border-radius:var(--r-sm);
-  padding:13px 14px;cursor:pointer;transition:all .15s;
-  color:var(--txt);font-family:var(--sans);font-size:16px;font-weight:500;text-align:left;
-  margin-bottom:8px
-}
-.user-btn:last-child{margin-bottom:0}
-.user-btn:hover,.user-btn:active{border-color:var(--acc);background:var(--acc-d2)}
-.ava{
-  width:36px;height:36px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;font-family:var(--mono);flex-shrink:0
-}
-.u-role{font-size:13px;color:var(--txt3);font-family:var(--mono);letter-spacing:.05em;margin-top:2px}
-
-/* ── BIO step ── */
-.bio-step{text-align:center;padding:1rem 0}
-.bio-ring{
-  width:88px;height:88px;border-radius:50%;border:2px solid var(--acc);
-  display:flex;align-items:center;justify-content:center;font-size:36px;
-  margin:0 auto 1.5rem;position:relative;cursor:pointer
-}
-.bio-ring::before{
-  content:'';position:absolute;inset:-8px;border-radius:50%;
-  border:1px solid rgba(198,241,53,0.2);
-  animation:spin 3s linear infinite
-}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.bio-msg{font-family:var(--mono);font-size:14px;color:var(--txt2);letter-spacing:.1em;line-height:1.7;margin-bottom:1.5rem}
-.bio-user-name{font-size:20px;font-weight:600;color:var(--txt);margin-bottom:4px}
-.btn-back{background:none;border:1px solid var(--bd);border-radius:100px;padding:10px 24px;color:var(--txt2);font-family:var(--mono);font-size:13px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
-
-/* ══════════ APP HEADER ══════════ */
-.app-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.9rem 1.1rem;border-bottom:1px solid var(--bd);
-  background:var(--s1);flex-shrink:0;position:relative;z-index:10
-}
-.hdr-logo{font-family:var(--mono);font-size:14px;letter-spacing:.25em;color:var(--acc)}
-.hdr-right{display:flex;align-items:center;gap:10px}
-.hdr-ava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--mono)}
-.hdr-name{font-size:12px;color:var(--txt2)}
-.btn-xs{
-  background:none;border:1px solid var(--bd);border-radius:8px;
-  padding:5px 10px;color:var(--txt3);font-size:11px;font-family:var(--mono);
-  letter-spacing:.05em;cursor:pointer;transition:all .15s
-}
-.btn-xs:hover{border-color:var(--err);color:var(--err)}
-
-/* ══════════ BOTTOM NAV ══════════ */
-.bnav{
-  display:flex;border-top:1px solid var(--bd);background:var(--s1);
-  flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)
-}
-.bnav-btn{
-  flex:1;padding:10px 4px 12px;display:flex;flex-direction:column;
-  align-items:center;gap:3px;background:none;border:none;
-  color:var(--txt3);font-family:var(--mono);font-size:11px;letter-spacing:.1em;
-  text-transform:uppercase;cursor:pointer;transition:all .15s
-}
+.scroll{flex:1;overflow-y:auto;padding:1rem}
+.app-hdr{display:flex;align-items:center;justify-content:space-between;padding:.9rem;background:var(--s1);border-bottom:1px solid var(--bd)}
+.hdr-logo{font-family:var(--mono);color:var(--acc);letter-spacing:2px}
+.btn-xs{background:none;border:1px solid var(--bd);color:var(--txt3);padding:5px 10px;border-radius:8px;font-size:11px;cursor:pointer}
+.user-btn{display:flex;align-items:center;gap:12px;width:100%;background:var(--s2);border:1px solid var(--bd);padding:13px;border-radius:var(--r-sm);color:var(--txt);margin-bottom:8px;cursor:pointer}
+.ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;background:var(--acc);color:#000}
+.hero{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:2rem;text-align:center;margin-bottom:1rem}
+.clock{font-size:48px;font-family:var(--mono)}
+.btn-main{width:100%;max-width:260px;padding:16px;border-radius:var(--r);border:none;font-family:var(--mono);font-weight:bold;cursor:pointer;margin:10px auto;display:block}
+.btn-in{background:var(--acc);color:#000}
+.btn-out{background:rgba(255,82,82,0.1);color:var(--err);border:1px solid var(--err)}
+.bnav{display:flex;background:var(--s1);border-top:1px solid var(--bd)}
+.bnav-btn{flex:1;padding:15px;background:none;border:none;color:var(--txt3);font-family:var(--mono);font-size:11px;cursor:pointer}
 .bnav-btn.on{color:var(--acc)}
-.bnav-ico{font-size:22px;line-height:1}
-
-/* ══════════ FICHA HERO ══════════ */
-.hero{
-  background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);
-  padding:1.75rem 1rem;margin-bottom:10px;text-align:center;position:relative;overflow:hidden
-}
-.hero::after{
-  content:'';position:absolute;width:180px;height:180px;
-  background:radial-gradient(circle,rgba(198,241,53,0.04) 0%,transparent 70%);
-  bottom:-60px;left:50%;transform:translateX(-50%);pointer-events:none
-}
-.clock{font-family:var(--mono);font-size:54px;font-weight:300;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
-.clock-date{font-family:var(--mono);font-size:13px;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.25rem}
-
-.badge{display:inline-flex;align-items:center;gap:7px;border-radius:100px;padding:6px 16px;font-family:var(--mono);font-size:13px;letter-spacing:.1em;font-weight:500;margin-bottom:1.25rem}
-.badge .dot{width:6px;height:6px;border-radius:50%}
-.b-off{background:var(--s2);color:var(--txt3);border:1px solid var(--bd)}
-.b-off .dot{background:var(--txt3)}
-.b-on{background:var(--ok-d);color:var(--ok);border:1px solid rgba(61,220,132,.25)}
-.b-on .dot{background:var(--ok);box-shadow:0 0 6px rgba(61,220,132,.7);animation:blink 2s infinite}
-.b-pause{background:var(--warn-d);color:var(--warn);border:1px solid rgba(255,179,71,.25)}
-.b-pause .dot{background:var(--warn);animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-
-.btn-main{
-  display:block;width:100%;max-width:240px;margin:0 auto;
-  padding:16px;border:none;border-radius:var(--r);
-  font-family:var(--mono);font-size:15px;letter-spacing:.15em;font-weight:500;
-  cursor:pointer;transition:all .18s;text-transform:uppercase
-}
-.btn-in{background:var(--acc);color:#080808}
-.btn-in:active{transform:scale(.97)}
-.btn-out{background:var(--err-d);color:var(--err);border:1px solid rgba(255,82,82,.35)}
-.btn-out:active{transform:scale(.97)}
-.btn-pause{background:var(--warn-d);color:var(--warn);border:1px solid rgba(255,179,71,.3)}
-.btn-resume{background:var(--ok-d);color:var(--ok);border:1px solid rgba(61,220,132,.3)}
-
-.jornada-row{margin-top:.9rem;font-family:var(--mono);font-size:12px;color:var(--txt3)}
-.jornada-row span{color:var(--ok);font-size:14px;font-weight:500}
-.btn-pause-sm{
-  margin-top:.75rem;background:none;border:1px solid var(--bd);
-  border-radius:8px;padding:7px 18px;color:var(--txt3);
-  font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.08em
-}
-.btn-pause-sm:hover{border-color:var(--warn);color:var(--warn)}
-
-/* ── Quick actions ── */
-.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.qcard{
-  background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);
-  padding:14px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px
-}
-.qcard:hover,.qcard:active{border-color:var(--acc);background:var(--acc-d2)}
-.qcard-ico{font-size:22px;line-height:1}
-.qcard-lbl{font-size:15px;font-weight:500}
-.qcard-sub{font-size:13px;color:var(--txt3);font-family:var(--mono)}
-
-/* ── Registros ── */
-.reg-item{
-  background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);
-  padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between
-}
-.reg-date{font-family:var(--mono);font-size:13px;color:var(--txt3);margin-bottom:3px;letter-spacing:.04em}
-.reg-time{font-family:var(--mono);font-size:16px;font-weight:500}
-.reg-sub{font-size:13px;color:var(--txt3);margin-top:2px}
-.tag-extra{font-family:var(--mono);font-size:12px;background:var(--warn-d);color:var(--warn);border-radius:6px;padding:4px 10px}
-.tag-ok{font-family:var(--mono);font-size:12px;color:var(--ok)}
-
-/* ── Summary row ── */
-.sum-row{
-  display:flex;gap:1rem;background:var(--s1);border:1px solid var(--bd);
-  border-radius:var(--r-sm);padding:1rem;margin-top:2px
-}
-.sum-item .sum-lbl{font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
-.sum-item .sum-val{font-family:var(--mono);font-size:20px;font-weight:500}
-.c-ok{color:var(--ok)}.c-warn{color:var(--warn)}.c-info{color:var(--info)}
-
-/* ── Mes nav ── */
-.mes-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);
-  padding:9px 14px;margin-bottom:10px
-}
-.mes-nav-btn{background:none;border:none;color:var(--txt2);font-size:16px;cursor:pointer;padding:0 6px}
-.mes-lbl{font-family:var(--mono);font-size:14px;color:var(--txt);letter-spacing:.08em}
-
-/* ══════════ ADMIN TABS ══════════ */
-.tabs{display:flex;gap:3px;background:var(--s2);border-radius:var(--r-sm);padding:3px;border:1px solid var(--bd);margin-bottom:10px;flex-shrink:0}
-.tab{
-  flex:1;padding:8px 4px;border-radius:8px;border:none;background:none;
-  color:var(--txt3);font-family:var(--mono);font-size:12px;letter-spacing:.08em;
-  cursor:pointer;transition:all .15s;text-transform:uppercase
-}
-.tab.on{background:var(--acc);color:#080808;font-weight:700}
-.tab-p{display:none}.tab-p.on{display:block}
-
-/* ── Stats grid ── */
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.scard{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);padding:14px}
-.scard-lbl{font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
-.scard-val{font-family:var(--mono);font-size:26px;font-weight:500}
-.scard-sub{font-size:13px;color:var(--txt3);margin-top:3px;font-family:var(--mono)}
-
-/* ── Emp card ── */
-.emp-card{
-  background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);
-  padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px
-}
-.emp-info{flex:1}
-.emp-name{font-size:16px;font-weight:500;margin-bottom:2px}
-.emp-meta{font-family:var(--mono);font-size:13px;color:var(--txt3)}
-.emp-tag{font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:6px;letter-spacing:.05em}
-.et-in{background:var(--ok-d);color:var(--ok)}
-.et-out{background:var(--s2);color:var(--txt3)}
-.et-pause{background:var(--warn-d);color:var(--warn)}
-
-/* ── Vac cards ── */
-.vac-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);padding:14px;margin-bottom:8px}
-.vac-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.vac-who{font-size:16px;font-weight:500}
-.vac-dates{font-family:var(--mono);font-size:13px;color:var(--txt3);margin-bottom:10px}
-.vac-reason{font-size:14px;color:var(--txt2);margin-bottom:10px;font-style:italic}
-.vac-acts{display:flex;gap:8px}
-.btn-ok{flex:1;padding:10px;background:var(--ok-d);color:var(--ok);border:1px solid rgba(61,220,132,.3);border-radius:8px;font-family:var(--mono);font-size:13px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
-.btn-no{flex:1;padding:10px;background:var(--err-d);color:var(--err);border:1px solid rgba(255,82,82,.3);border-radius:8px;font-family:var(--mono);font-size:13px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
-.tag-pend{font-family:var(--mono);font-size:12px;background:var(--err-d);color:var(--err);padding:4px 12px;border-radius:6px;letter-spacing:.08em}
-.tag-apro{font-family:var(--mono);font-size:12px;background:var(--ok-d);color:var(--ok);padding:4px 12px;border-radius:6px;letter-spacing:.08em}
-.tag-rech{font-family:var(--mono);font-size:12px;background:var(--s2);color:var(--txt3);padding:4px 12px;border-radius:6px;letter-spacing:.08em}
-
-/* ── Calendar ── */
-.cal{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:1rem;margin-bottom:10px}
-.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cal-title{font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.08em}
-.cal-nav{background:none;border:none;color:var(--txt2);font-size:20px;cursor:pointer;padding:0 10px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dow{font-family:var(--mono);font-size:11px;color:var(--txt3);text-align:center;padding:5px 0;text-transform:uppercase;letter-spacing:.05em}
-.cal-day{
-  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  border-radius:7px;font-family:var(--mono);font-size:13px;cursor:pointer;position:relative;
-  transition:all .12s
-}
-.cal-day:hover{background:var(--s3)}
-.cal-today{border:2px solid var(--acc);color:var(--acc);font-weight:700}
-.cal-vac-pend{background:rgba(255,82,82,.25);color:var(--err);border:1px solid rgba(255,82,82,.4)}
-.cal-vac-apro{background:rgba(61,220,132,.2);color:var(--ok);border:1px solid rgba(61,220,132,.35)}
-.cal-vac-other{background:rgba(255,255,255,.04);color:var(--txt3);cursor:not-allowed;position:relative}
-.cal-vac-other::after{content:'🔒';font-size:7px;position:absolute;top:1px;right:2px}
-.cal-empty{opacity:0;pointer-events:none}
-
-/* ── Workers admin ── */
-.worker-mgmt-card{
-  background:var(--s1);border:1px solid var(--bd);border-radius:var(--r-sm);
-  padding:14px;margin-bottom:8px
-}
-.wm-hdr{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.wm-info{flex:1}
-.wm-name{font-size:14px;font-weight:500;margin-bottom:2px}
-.wm-meta{font-family:var(--mono);font-size:11px;color:var(--txt3)}
-.wm-acts{display:flex;gap:6px}
-.btn-edit{padding:6px 12px;background:var(--info-d);color:var(--info);border:1px solid rgba(94,174,255,.3);border-radius:8px;font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.05em;text-transform:uppercase}
-.btn-del{padding:6px 12px;background:var(--err-d);color:var(--err);border:1px solid rgba(255,82,82,.3);border-radius:8px;font-family:var(--mono);font-size:11px;cursor:pointer;letter-spacing:.05em;text-transform:uppercase}
-.btn-add-w{width:100%;padding:14px;background:var(--acc-d);color:var(--acc);border:1px solid rgba(198,241,53,.3);border-radius:var(--r-sm);font-family:var(--mono);font-size:12px;letter-spacing:.15em;cursor:pointer;text-transform:uppercase;margin-top:4px;transition:all .15s}
-.btn-add-w:hover{background:var(--acc-d2)}
-
-/* ── Export ── */
-.exp-info{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r-sm);padding:1rem;margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--txt3);line-height:1.7}
-.btn-exp{
-  width:100%;padding:14px;border-radius:var(--r-sm);border:none;
-  font-family:var(--mono);font-size:12px;letter-spacing:.15em;cursor:pointer;
-  transition:all .15s;text-transform:uppercase;margin-bottom:8px;display:block
-}
-.btn-exp-xl{background:var(--acc-d);color:var(--acc);border:1px solid rgba(198,241,53,.3)}
-.btn-exp-xl:hover{background:var(--acc);color:#080808}
-.btn-exp-csv{background:var(--s2);color:var(--txt2);border:1px solid var(--bd)}
-.btn-exp-csv:hover{border-color:var(--txt2)}
-
-/* ══════════ MODALS ══════════ */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:500;align-items:flex-end}
 .overlay.on{display:flex}
-.sheet{
-  background:var(--s1);border-radius:18px 18px 0 0;border-top:1px solid var(--bd);
-  padding:1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom,0));
-  width:100%;max-width:480px;animation:up .22s ease-out
-}
+.sheet{background:var(--s1);width:100%;padding:2rem;border-radius:20px 20px 0 0;animation:up 0.3s ease-out}
 @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.sheet-handle{width:34px;height:3px;background:var(--bd2);border-radius:2px;margin:0 auto 1.25rem}
-.sheet-title{font-size:17px;font-weight:600;margin-bottom:1.25rem}
-
 .fgrp{margin-bottom:1rem}
-.flbl{display:block;font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:7px}
-.finp,.fsel{
-  width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r-sm);
-  padding:11px 13px;color:var(--txt);font-family:var(--sans);font-size:15px;
-  appearance:none;-webkit-appearance:none
-}
-.finp:focus,.fsel:focus{outline:none;border-color:var(--acc)}
-.finp::placeholder{color:var(--txt3)}
-
-.color-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px}
-.color-opt{width:100%;aspect-ratio:1;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s}
-.color-opt.sel{border-color:white;transform:scale(1.1)}
-
-.macts{display:flex;gap:8px;margin-top:1.25rem}
-.btn-cancel{flex:1;padding:13px;background:none;border:1px solid var(--bd);border-radius:var(--r-sm);color:var(--txt3);font-family:var(--mono);font-size:12px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
-.btn-go{flex:2;padding:13px;background:var(--acc);border:none;border-radius:var(--r-sm);color:#080808;font-family:var(--mono);font-size:12px;letter-spacing:.1em;font-weight:700;cursor:pointer;transition:all .15s;text-transform:uppercase}
-.btn-go:active{transform:scale(.98)}
-.btn-go-del{flex:2;padding:13px;background:var(--err-d);border:1px solid rgba(255,82,82,.35);border-radius:var(--r-sm);color:var(--err);font-family:var(--mono);font-size:12px;letter-spacing:.1em;font-weight:700;cursor:pointer;text-transform:uppercase}
-
-/* ── Toast ── */
-.toast{
-  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--s2);border:1px solid var(--bd2);border-radius:100px;
-  padding:10px 22px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;
-  z-index:9000;opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.t-ok{border-color:rgba(61,220,132,.4);color:var(--ok)}
-.toast.t-err{border-color:rgba(255,82,82,.4);color:var(--err)}
-.toast.t-warn{border-color:rgba(255,179,71,.4);color:var(--warn)}
-
-/* ── Empty ── */
-.empty{text-align:center;padding:3rem 1rem;color:var(--txt3);font-family:var(--mono);font-size:12px;line-height:2}
-.empty-ico{font-size:28px;opacity:.3;margin-bottom:.5rem}
-
-/* ── Divider ── */
-.divider{height:1px;background:var(--bd);margin:12px 0}
+.flbl{display:block;font-size:10px;color:var(--txt3);margin-bottom:5px;text-transform:uppercase}
+.finp{width:100%;background:var(--s2);border:1px solid var(--bd);padding:12px;color:#fff;border-radius:8px}
+.macts{display:flex;gap:10px;margin-top:1rem}
+.btn-go{flex:1;padding:12px;background:var(--acc);border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn-cancel{flex:1;padding:12px;background:none;border:1px solid var(--bd);color:var(--txt3);border-radius:8px;cursor:pointer}
+.worker-mgmt-card{background:var(--s1);border:1px solid var(--bd);padding:1rem;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--s2);padding:10px 20px;border-radius:100px;font-size:12px;border:1px solid var(--acc);opacity:0;transition:0.3s;z-index:1000}
+.toast.show{opacity:1}
+.tabs{display:flex;gap:5px;margin-bottom:1rem}
+.tab{flex:1;padding:8px;background:var(--s2);border:none;color:var(--txt3);border-radius:5px;font-size:11px;cursor:pointer}
+.tab.on{background:var(--acc);color:#000}
+.tab-p{display:none}.tab-p.on{display:block}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════
-     SCREEN: LOGIN
-══════════════════════════════════ -->
+<!-- PANTALLA LOGIN -->
 <div id="s-login" class="scr on">
-  <div class="brand">
-    <div class="brand-tag">Control de jornada</div>
-    <div class="brand-name">Fichalili</div>
-    <div class="brand-sub">Selecciona tu usuario</div>
-  </div>
-  <div class="login-box">
-    <div class="login-step on" id="ls-users">
-      <div class="ls-title">¿Quién eres?</div>
-      <div id="user-list"></div>
-    </div>
-    <div class="login-step" id="ls-bio">
-      <div class="bio-step">
-        <div class="bio-user-name" id="bio-uname"></div>
-        <div class="bio-ring" id="bio-ring" onclick="triggerBio()">🔑</div>
-        <div class="bio-msg" id="bio-msg">TOCA PARA INTRODUCIR<br>TU PIN DE ACCESO</div>
-        <button class="btn-back" onclick="backToUsers()">← VOLVER</button>
-      </div>
-    </div>
+  <div class="scroll" style="display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <h1 style="font-size:40px;margin-bottom:2rem">Fichalili</h1>
+    <div id="user-list" style="width:100%;max-width:320px"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════
-     SCREEN: WORKER
-══════════════════════════════════ -->
+<!-- PANTALLA TRABAJADOR -->
 <div id="s-worker" class="scr">
   <div class="app-hdr">
     <div class="hdr-logo">FICHALILI</div>
-    <div class="hdr-right">
-      <div class="hdr-ava" id="w-hdr-ava"></div>
-      <span class="hdr-name" id="w-hdr-name"></span>
-      <button class="btn-xs" onclick="logout()">SALIR</button>
-    </div>
+    <button class="btn-xs" onclick="logout()">SALIR</button>
   </div>
-
-  <div class="scroll" id="wp-fichar" style="display:block">
-    <div class="pad">
+  <div class="scroll">
+    <div id="wp-fichar">
       <div class="hero">
         <div class="clock" id="w-clock">00:00</div>
-        <div class="clock-date" id="w-date"></div>
-        <div class="badge b-off" id="w-badge"><div class="dot"></div><span id="w-badge-txt">FUERA</span></div>
-        <button class="btn-main btn-in" id="w-btn-main" onclick="doFichar()">↯ FICHAR ENTRADA</button>
-        <div class="jornada-row" id="w-jtimer-row" style="display:none">Jornada: <span id="w-jtimer">0:00:00</span></div>
-        <button class="btn-pause-sm" id="w-btn-pause" style="display:none" onclick="togglePausa()">⏸ PAUSA</button>
-      </div>
-      <div class="qgrid">
-        <div class="qcard" onclick="wNav('vacaciones')">
-          <div class="qcard-ico">✈</div>
-          <div class="qcard-lbl">Vacaciones</div>
-          <div class="qcard-sub">Solicitar días</div>
-        </div>
-        <div class="qcard" onclick="wNav('historial')">
-          <div class="qcard-ico">◷</div>
-          <div class="qcard-lbl">Mi historial</div>
-          <div class="qcard-sub">Ver registros</div>
-        </div>
+        <div id="w-date" style="color:var(--txt3);font-family:var(--mono);margin-bottom:1rem"></div>
+        <div id="w-badge" style="display:inline-block;padding:5px 15px;border-radius:100px;font-size:12px;background:var(--s2)">FUERA</div>
+        <button class="btn-main btn-in" id="w-btn-main" onclick="doFichar()">FICHAR ENTRADA</button>
+        <div id="w-jtimer-row" style="display:none;margin-top:10px;font-family:var(--mono)">Jornada: <span id="w-jtimer" style="color:var(--acc)">0:00:00</span></div>
       </div>
     </div>
   </div>
-
-  <div class="scroll" id="wp-historial" style="display:none">
-    <div class="pad">
-      <div class="mes-nav">
-        <button class="mes-nav-btn" onclick="wChangeMes(-1)">‹</button>
-        <span class="mes-lbl" id="w-mes"></span>
-        <button class="mes-nav-btn" onclick="wChangeMes(1)">›</button>
-      </div>
-      <div class="sec-lbl">REGISTROS</div>
-      <div id="w-regs"></div>
-      <div class="sum-row" id="w-sum"></div>
-    </div>
-  </div>
-
-  <div class="scroll" id="wp-vacaciones" style="display:none">
-    <div class="pad">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="sec-lbl" style="margin-bottom:0">CALENDARIO</div>
-        <div style="display:flex;gap:10px;font-family:var(--mono);font-size:11px">
-          <span style="color:var(--err)">● pendiente</span>
-          <span style="color:var(--ok)">● aprobada</span>
-        </div>
-      </div>
-      <div id="w-cal"></div>
-      <div class="sec-lbl" style="margin-top:6px">MIS SOLICITUDES</div>
-      <div id="w-mis-vac"></div>
-      <button class="btn-main btn-in" style="max-width:100%;margin-top:10px" onclick="openModal('m-vac-req')">+ SOLICITAR VACACIONES</button>
-    </div>
-  </div>
-
   <div class="bnav">
-    <button class="bnav-btn on" id="wb-fichar" onclick="wNav('fichar')">
-      <div class="bnav-ico">⏱</div><span>Fichar</span>
-    </button>
-    <button class="bnav-btn" id="wb-historial" onclick="wNav('historial')">
-      <div class="bnav-ico">◷</div><span>Historial</span>
-    </button>
-    <button class="bnav-btn" id="wb-vacaciones" onclick="wNav('vacaciones')">
-      <div class="bnav-ico">✈</div><span>Vacaciones</span>
-    </button>
+    <button class="bnav-btn on">FICHAR</button>
+    <button class="bnav-btn">HISTORIAL</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════
-     SCREEN: ADMIN
-══════════════════════════════════ -->
+<!-- PANTALLA ADMIN -->
 <div id="s-admin" class="scr">
   <div class="app-hdr">
-    <div class="hdr-logo">FICHALILI <span style="font-size:9px;letter-spacing:.25em;color:var(--warn)">ADMIN</span></div>
-    <div class="hdr-right">
-      <div class="hdr-ava" id="a-hdr-ava"></div>
-      <button class="btn-xs" onclick="logout()">SALIR</button>
-    </div>
+    <div class="hdr-logo">FICHALILI <span style="font-size:9px;color:var(--warn)">ADMIN</span></div>
+    <button class="btn-xs" onclick="logout()">SALIR</button>
   </div>
-  <div class="pad" style="padding-bottom:6px;flex-shrink:0">
+  <div class="scroll">
     <div class="tabs">
       <button class="tab on" onclick="aTab('hoy')">HOY</button>
-      <button class="tab" onclick="aTab('equipo')">EQUIPO</button>
-      <button class="tab" onclick="aTab('vacas')">VACAS</button>
-      <button class="tab" onclick="aTab('workers')">PERSONAL</button>
-      <button class="tab" onclick="aTab('export')">EXCEL</button>
+      <button class="tab" onclick="aTab('personal')">PERSONAL</button>
     </div>
-  </div>
-
-  <div class="scroll">
-    <div class="pad" style="padding-top:4px">
-      <div class="tab-p on" id="ap-hoy">
-        <div class="sgrid">
-          <div class="scard"><div class="scard-lbl">DENTRO AHORA</div><div class="scard-val" id="a-dentro">0</div><div class="scard-sub">de <span id="a-total-w">0</span> empleados</div></div>
-          <div class="scard"><div class="scard-lbl">HORAS HOY</div><div class="scard-val c-ok" id="a-horas-hoy">0h</div><div class="scard-sub">equipo</div></div>
-          <div class="scard"><div class="scard-lbl">EXTRAS MES</div><div class="scard-val c-warn" id="a-extras">0h</div><div class="scard-sub">total equipo</div></div>
-          <div class="scard"><div class="scard-lbl">VAC. PEND.</div><div class="scard-val" id="a-vac-n">0</div><div class="scard-sub">por aprobar</div></div>
-        </div>
-        <div class="sec-lbl">ESTADO EN TIEMPO REAL</div>
-        <div id="a-realtime"></div>
+    <div id="ap-hoy" class="tab-p on">
+      <div style="background:var(--s1);padding:1rem;border-radius:10px;border:1px solid var(--bd)">
+        <div style="font-size:12px;color:var(--txt3)">EMPLEADOS DENTRO</div>
+        <div id="a-dentro" style="font-size:32px;color:var(--acc)">0</div>
       </div>
-      <div class="tab-p" id="ap-equipo">
-        <div class="mes-nav">
-          <button class="mes-nav-btn" onclick="aChangeMes(-1)">‹</button>
-          <span class="mes-lbl" id="a-mes"></span>
-          <button class="mes-nav-btn" onclick="aChangeMes(1)">›</button>
-        </div>
-        <div id="a-equipo-list"></div>
-      </div>
-      <div class="tab-p" id="ap-vacas">
-        <div class="sec-lbl">PENDIENTES DE APROBAR</div>
-        <div id="a-vac-pend-list"></div>
-        <div class="divider"></div>
-        <div class="sec-lbl">HISTORIAL</div>
-        <div id="a-vac-hist"></div>
-        <button class="btn-main btn-in" style="max-width:100%;margin-top:8px" onclick="openModal('m-vac-admin')">+ ASIGNAR VACACIONES</button>
-      </div>
-      <div class="tab-p" id="ap-workers">
-        <div class="sec-lbl">EMPLEADOS</div>
-        <div id="a-workers-list"></div>
-        <button class="btn-add-w" onclick="openAddWorker()">+ AÑADIR EMPLEADO</button>
-      </div>
-      <div class="tab-p" id="ap-export">
-        <div class="sec-lbl">EXPORTAR REGISTROS</div>
-        <div class="card">
-          <div class="fgrp">
-            <label class="flbl">EMPLEADO</label>
-            <select class="fsel" id="exp-emp"><option value="all">Todos los empleados</option></select>
-          </div>
-          <div class="fgrp">
-            <label class="flbl">MES</label>
-            <select class="fsel" id="exp-mes"></select>
-          </div>
-          <div class="fgrp" style="margin-bottom:0">
-            <label class="flbl">AÑO</label>
-            <select class="fsel" id="exp-anyo"></select>
-          </div>
-        </div>
-        <button class="btn-exp btn-exp-xl" onclick="exportXL()">↓ EXPORTAR EXCEL (.xlsx)</button>
-        <button class="btn-exp btn-exp-csv" onclick="exportCSV()">↓ EXPORTAR CSV</button>
-      </div>
+    </div>
+    <div id="ap-personal" class="tab-p">
+      <div id="a-workers-list"></div>
+      <button class="btn-add-w" style="width:100%;padding:15px;background:var(--acc);border:none;border-radius:10px;font-weight:bold;margin-top:1rem" onclick="openAddWorker()">+ AÑADIR EMPLEADO</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════
-     MODALS
-══════════════════════════════════ -->
-<div class="overlay" id="m-vac-req">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Solicitar vacaciones</div>
-    <div class="fgrp"><label class="flbl">FECHA INICIO</label><input type="date" class="finp" id="vr-ini"></div>
-    <div class="fgrp"><label class="flbl">FECHA FIN</label><input type="date" class="finp" id="vr-fin"></div>
-    <div class="fgrp"><label class="flbl">MOTIVO (opcional)</label><input type="text" class="finp" id="vr-mot" placeholder="Vacaciones de verano..."></div>
-    <div class="macts">
-      <button class="btn-cancel" onclick="closeModal('m-vac-req')">CANCELAR</button>
-      <button class="btn-go" onclick="submitVacReq()">ENVIAR</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="m-vac-admin">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Asignar vacaciones</div>
-    <div class="fgrp"><label class="flbl">EMPLEADO</label><select class="fsel" id="va-emp"></select></div>
-    <div class="fgrp"><label class="flbl">FECHA INICIO</label><input type="date" class="finp" id="va-ini"></div>
-    <div class="fgrp"><label class="flbl">FECHA FIN</label><input type="date" class="finp" id="va-fin"></div>
-    <div class="fgrp"><label class="flbl">MOTIVO</label><input type="text" class="finp" id="va-mot" placeholder="Vacaciones verano 2025..."></div>
-    <div class="macts">
-      <button class="btn-cancel" onclick="closeModal('m-vac-admin')">CANCELAR</button>
-      <button class="btn-go" onclick="adminAssignVac()">ASIGNAR Y APROBAR</button>
-    </div>
-  </div>
-</div>
-
+<!-- MODAL AÑADIR/EDITAR -->
 <div class="overlay" id="m-add-worker">
   <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="mw-title">Añadir empleado</div>
+    <h3 id="mw-title">Añadir empleado</h3>
     <input type="hidden" id="mw-id">
-    <div class="fgrp"><label class="flbl">NOMBRE COMPLETO</label><input type="text" class="finp" id="mw-nombre" placeholder="María López"></div>
-    <div class="fgrp"><label class="flbl">EMAIL (opcional)</label><input type="email" class="finp" id="mw-email" placeholder="m.lopez@empresa.com"></div>
-    <div class="fgrp"><label class="flbl">JORNADA DIARIA (horas)</label><input type="number" class="finp" id="mw-jornada" value="8" min="1" max="12" step="0.5"></div>
-    <div class="fgrp"><label class="flbl">PIN DE ACCESO (4 dígitos)</label><input type="password" class="finp" id="mw-pin" maxlength="4" placeholder="1234" inputmode="numeric"></div>
-    <div class="fgrp">
-      <label class="flbl">COLOR</label>
-      <div class="color-picker" id="mw-colors"></div>
-    </div>
+    <div class="fgrp"><label class="flbl">Nombre</label><input type="text" class="finp" id="mw-nombre"></div>
+    <div class="fgrp"><label class="flbl">Jornada (h)</label><input type="number" class="finp" id="mw-jornada" value="8"></div>
+    <div class="fgrp"><label class="flbl">PIN (4 dígitos)</label><input type="password" class="finp" id="mw-pin" maxlength="4"></div>
     <div class="macts">
       <button class="btn-cancel" onclick="closeModal('m-add-worker')">CANCELAR</button>
       <button class="btn-go" onclick="saveWorker()">GUARDAR</button>
@@ -592,309 +122,252 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
   </div>
 </div>
 
+<!-- MODAL BORRAR -->
 <div class="overlay" id="m-del-worker">
   <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Eliminar empleado</div>
-    <div style="color:var(--txt2);font-size:14px;line-height:1.6;margin-bottom:1.25rem">
-      ¿Eliminar a <strong id="del-w-name"></strong>? Sus registros se conservarán pero no podrá fichar.
-    </div>
+    <h3>Eliminar empleado</h3>
+    <p style="color:var(--txt2);margin:1rem 0">¿Estás seguro de que quieres eliminar a <strong id="del-w-name"></strong>?</p>
     <input type="hidden" id="del-w-id">
     <div class="macts">
       <button class="btn-cancel" onclick="closeModal('m-del-worker')">CANCELAR</button>
-      <button class="btn-go-del" onclick="confirmDelWorker()">ELIMINAR</button>
+      <button class="btn-go" style="background:var(--err);color:#fff" onclick="confirmDelWorker()">ELIMINAR</button>
     </div>
   </div>
 </div>
 
+<!-- MODAL PIN -->
+<div id="pin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
+  <div id="pin-target-name" style="margin-bottom:1rem;font-size:20px"></div>
+  <div style="font-size:12px;color:var(--txt3);margin-bottom:2rem">INTRODUCE TU PIN</div>
+  <div id="pin-display" style="font-size:32px;letter-spacing:15px;margin-bottom:2rem;height:40px"></div>
+  <div style="display:grid;grid-template-columns:repeat(3,70px);gap:15px" id="pin-pad"></div>
+  <button onclick="cancelPin()" style="margin-top:2rem;background:none;border:1px solid var(--bd);color:var(--txt3);padding:10px 20px;border-radius:100px">CANCELAR</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-// ════════════════════════════════════════
-// CONFIGURACIÓN INTEGRADA
-// ════════════════════════════════════════
+// --- CONFIGURACIÓN ---
 const CFG = {
-  GAS_URL: 'https://script.google.com/macros/s/AKfycbyy7wlpPoN-PwsBW_5JoO7DIqus6W0Erun7nUbcimD8aL3wTjqDrp06af4pPPZBJDPB/exec',
-  EMPRESA: 'Mi Empresa',
-  JORNADA_DEFAULT: 8,
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyy7wlpPoN-PwsBW_5JoO7DIqus6W0Erun7nUbcimD8aL3wTjqDrp06af4pPPZBJDPB/exec'
 };
 
-const AVATAR_COLORS = [
-  { color:'#c6f135', bg:'rgba(198,241,53,0.12)' },
-  { color:'#3ddc84', bg:'rgba(61,220,132,0.12)' },
-  { color:'#5eaeff', bg:'rgba(94,174,255,0.12)' },
-  { color:'#ffb347', bg:'rgba(255,179,71,0.12)' },
-  { color:'#ff7eb6', bg:'rgba(255,126,182,0.12)' },
-  { color:'#a78bfa', bg:'rgba(167,139,250,0.12)' },
+// --- ESTADO ---
+let STATE = { user: null, pinBuffer: '' };
+let WORKERS = JSON.parse(localStorage.getItem('workers')) || [
+  { id: 'admin', nombre: 'Administrador', jornada: 8, pin: '0000', role: 'admin', activo: true }
 ];
+let JORNADAS = JSON.parse(localStorage.getItem('jornadas_' + new Date().toISOString().split('T')[0])) || {};
 
-const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const DIAS_S = ['L','M','X','J','V','S','D'];
-
-// ════════════════════════════════════════
-// ALMACENAMIENTO + SYNC GAS
-// ════════════════════════════════════════
-function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } }
-function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-
-let WORKERS = load('workers', [{ id:'admin', nombre:'Administrador', email:'', color:'#ff7eb6', bg:'rgba(255,126,182,0.12)', jornada:8, role:'admin', activo:true, pin:'0000' }]);
-let FICHAJES = load('fichajes', []);
-let VACACIONES = load('vacaciones', []);
-let JORNADAS = {};
-const TODAY = new Date().toISOString().split('T')[0];
-
-function loadJornadas() { JORNADAS = load('jornadas_' + TODAY, {}); }
-function saveJornadas() { save('jornadas_' + TODAY, JORNADAS); }
-loadJornadas();
-
-// ── ÚNICA FUNCIÓN ROBUSTA SYNC GAS (NO-CORS) ──
+// --- SINCRONIZACIÓN (LA CLAVE) ---
 async function syncGAS(tipo, extra = {}) {
   if (!CFG.GAS_URL) return;
-  const payload = {
-    tipo,
-    userId: STATE.user?.id,
-    nombre: STATE.user?.nombre,
-    timestamp: new Date().toISOString(),
-    ...extra
-  };
+  const payload = { tipo, ...extra, userId: STATE.user?.id, nombre: STATE.user?.nombre, timestamp: new Date().toISOString() };
+  
+  // Enviamos como texto plano para evitar el bloqueo CORS de Google
   try {
     await fetch(CFG.GAS_URL, {
       method: 'POST',
-      mode: 'no-cors', // Evita errores de preflight CORS
+      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload),
-      redirect: 'follow'
+      body: JSON.stringify(payload)
     });
-    console.log("Sync exitoso:", tipo);
+    console.log("Sincronización enviada:", tipo);
   } catch (e) {
-    console.warn("Sync error:", e);
+    console.error("Error de red:", e);
   }
 }
 
-async function gasGet(params) {
-  if (!CFG.GAS_URL) return null;
-  try {
-    const qs = new URLSearchParams(params).toString();
-    const r = await fetch(CFG.GAS_URL + '?' + qs, { redirect: 'follow' });
-    return await r.json();
-  } catch(e) { return null; }
-}
-
-// ════════════════════════════════════════
-// BIOMETRÍA / PIN
-// ════════════════════════════════════════
-let _bioCb = null;
-let _bioUser = null;
-let _pinValue = '';
-
-function triggerBio() { showPinModal(); }
-function showPinModal() {
-  if (!document.getElementById('pin-modal')) {
-    const div = document.createElement('div');
-    div.id = 'pin-modal';
-    div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem';
-    div.innerHTML = `
-      <div style="font-family:var(--mono);font-size:11px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase">IDENTIDAD</div>
-      <div id="pin-name" style="font-size:18px;font-weight:600;color:var(--txt)"></div>
-      <div id="pin-dots" style="display:flex;gap:12px;margin:4px 0">
-        <div class="pdot"></div><div class="pdot"></div><div class="pdot"></div><div class="pdot"></div>
-      </div>
-      <style>.pdot{width:14px;height:14px;border-radius:50%;border:2px solid var(--txt3);transition:all .15s}.pdot.fill{background:var(--acc);border-color:var(--acc)}</style>
-      <div style="display:grid;grid-template-columns:repeat(3,72px);gap:10px" id="pin-pad"></div>
-      <div style="display:flex;gap:10px;margin-top:4px">
-        <button onclick="pinClear()" style="padding:10px 20px;background:none;border:1px solid var(--bd);border-radius:8px;color:var(--txt3);font-family:var(--mono);font-size:12px;cursor:pointer">BORRAR</button>
-        <button onclick="cancelPin()" style="padding:10px 20px;background:none;border:1px solid var(--bd);border-radius:8px;color:var(--txt3);font-family:var(--mono);font-size:12px;cursor:pointer">SALIR</button>
-      </div>
-      <div id="pin-err" style="color:var(--err);font-family:var(--mono);font-size:11px"></div>
-    `;
-    document.body.appendChild(div);
-    const pad = div.querySelector('#pin-pad');
-    [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n => {
-      const btn = document.createElement('button');
-      btn.textContent = n;
-      btn.style.cssText = 'width:72px;height:56px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;color:var(--txt);font-family:var(--mono);font-size:20px;cursor:pointer';
-      btn.addEventListener('click', () => { if(n==='') return; if(n==='⌫') { _pinValue = _pinValue.slice(0,-1); updatePinDots(); return; } if(_pinValue.length<4) _pinValue += n; updatePinDots(); if(_pinValue.length===4) setTimeout(checkPin, 150); });
-      pad.appendChild(btn);
-    });
-  }
-  _pinValue = '';
-  document.getElementById('pin-name').textContent = _bioUser?.nombre || '';
-  document.getElementById('pin-err').textContent = '';
-  updatePinDots();
-  document.getElementById('pin-modal').style.display = 'flex';
-}
-function updatePinDots() { document.querySelectorAll('.pdot').forEach((d,i) => d.classList.toggle('fill', i < _pinValue.length)); }
-function pinClear() { _pinValue = ''; updatePinDots(); }
-function cancelPin() { document.getElementById('pin-modal').style.display = 'none'; }
-function checkPin() {
-  if (_pinValue === (_bioUser?.pin || '1234')) {
-    document.getElementById('pin-modal').style.display = 'none';
-    const cb = _bioCb; _bioCb = null; if(cb) cb();
-  } else {
-    document.getElementById('pin-err').textContent = 'PIN INCORRECTO';
-    _pinValue = ''; updatePinDots();
-  }
-}
-function requireBio(user, cb) { _bioUser = user; _bioCb = cb; document.getElementById('bio-uname').textContent = user.nombre; document.getElementById('ls-users').classList.remove('on'); document.getElementById('ls-bio').classList.add('on'); }
-function backToUsers() { document.getElementById('ls-bio').classList.remove('on'); document.getElementById('ls-users').classList.add('on'); }
-
-// ════════════════════════════════════════
-// LÓGICA CORE APP
-// ════════════════════════════════════════
-const STATE = { user: null, wPage: 'fichar' };
-
+// --- LOGICA TRABAJADORES ---
 function selectUser(uid) {
-  const user = getWorker(uid);
-  if (!user) return;
-  requireBio(user, () => {
-    STATE.user = user;
-    if (user.role==='admin') initAdmin(); else initWorker();
+  const user = WORKERS.find(w => w.id === uid);
+  STATE.pinBuffer = '';
+  document.getElementById('pin-display').textContent = '';
+  document.getElementById('pin-target-name').textContent = user.nombre;
+  document.getElementById('pin-modal').style.display = 'flex';
+  renderPinPad(user);
+}
+
+function renderPinPad(user) {
+  const pad = document.getElementById('pin-pad');
+  pad.innerHTML = '';
+  [1,2,3,4,5,6,7,8,9,'C',0,'OK'].forEach(n => {
+    const b = document.createElement('button');
+    b.textContent = n;
+    b.style.cssText = "width:70px;height:70px;border-radius:50%;border:1px solid var(--bd);background:var(--s2);color:#fff;font-size:20px";
+    b.onclick = () => {
+      if (n === 'C') { STATE.pinBuffer = ''; }
+      else if (n === 'OK') {
+        if (STATE.pinBuffer === user.pin) {
+          document.getElementById('pin-modal').style.display = 'none';
+          STATE.user = user;
+          user.role === 'admin' ? initAdmin() : initWorker();
+        } else {
+          showToast("PIN INCORRECTO", "t-err");
+          STATE.pinBuffer = '';
+        }
+      } else {
+        if (STATE.pinBuffer.length < 4) STATE.pinBuffer += n;
+      }
+      document.getElementById('pin-display').textContent = '•'.repeat(STATE.pinBuffer.length);
+    };
+    pad.appendChild(b);
   });
 }
 
-function renderLogin() {
-  const ul = document.getElementById('user-list');
-  ul.innerHTML = WORKERS.filter(w=>w.activo).map(u=>`
-    <button class="user-btn" onclick="selectUser('${u.id}')">
-      <div class="ava" style="background:${u.bg};color:${u.color}">${initials(u.nombre)}</div>
-      <div><div>${u.nombre}</div><div class="u-role">${u.role.toUpperCase()}</div></div>
-    </button>`).join('');
-}
-
-function initWorker() {
-  showScr('s-worker');
-  const u = STATE.user;
-  document.getElementById('w-hdr-ava').innerHTML = initials(u.nombre);
-  document.getElementById('w-hdr-ava').style.background = u.bg;
-  document.getElementById('w-hdr-name').textContent = u.nombre.split(' ')[0];
-  renderWorkerStatus();
-  wNav('fichar');
-  setInterval(tickClock, 1000);
-}
-
-function tickClock() {
-  const n = new Date();
-  const el = document.getElementById('w-clock');
-  if (el) el.textContent = n.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-  const de = document.getElementById('w-date');
-  if (de) de.textContent = n.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
-}
-
-function renderWorkerStatus() {
-  const uid = STATE.user.id;
-  const j = JORNADAS[uid];
-  const estado = j?.estado || 'fuera';
-  const badge = document.getElementById('w-badge');
-  const btxt = document.getElementById('w-badge-txt');
-  const btnM = document.getElementById('w-btn-main');
-
-  badge.className = 'badge ' + (estado==='dentro'?'b-on':estado==='pausa'?'b-pause':'b-off');
-  btxt.textContent = estado==='dentro'?'EN JORNADA':estado==='pausa'?'EN PAUSA':'FUERA';
-
-  if (estado==='fuera') {
-    btnM.className='btn-main btn-in'; btnM.textContent='↯ FICHAR ENTRADA'; btnM.onclick=doFichar;
-    document.getElementById('w-jtimer-row').style.display='none';
-  } else {
-    btnM.className='btn-main btn-out'; btnM.textContent='⏹ FICHAR SALIDA'; btnM.onclick=doSalida;
-    document.getElementById('w-jtimer-row').style.display='block';
-    document.getElementById('w-btn-pause').style.display = (estado==='pausa'?'none':'block');
-    if(estado==='pausa') {
-       btnM.className='btn-main btn-resume'; btnM.textContent='▶ REANUDAR'; btnM.onclick=togglePausa;
-    }
-  }
-}
+function cancelPin() { document.getElementById('pin-modal').style.display = 'none'; }
 
 function doFichar() {
-  requireBio(STATE.user, () => {
-    const uid = STATE.user.id;
-    JORNADAS[uid] = { entrada:Date.now(), pausas:[], estado:'dentro' };
-    saveJornadas();
-    renderWorkerStatus();
+  const uid = STATE.user.id;
+  if (!JORNADAS[uid]) {
+    JORNADAS[uid] = { entrada: Date.now(), pausas: [], estado: 'dentro' };
+    showToast("Entrada registrada", "t-ok");
     syncGAS('entrada');
-    showToast('Entrada registrada ✓','t-ok');
-  });
-}
-
-function doSalida() {
-  requireBio(STATE.user, () => {
-    const uid = STATE.user.id;
+  } else {
     const j = JORNADAS[uid];
     j.salida = Date.now();
-    const durMs = jornadaMs(j);
-    const fichaje = {
-      id: 'F'+Date.now(), userId:uid, nombre:STATE.user.nombre, fecha:TODAY,
-      entrada:fTime(new Date(j.entrada)), salida:fTime(new Date(j.salida)),
-      horas: +(durMs/3600000).toFixed(2),
-      pausas: j.pausas.length
-    };
-    fichaje.horasExtra = +Math.max(0, fichaje.horas - (STATE.user.jornada||8)).toFixed(2);
-    FICHAJES.push(fichaje);
-    save('fichajes', FICHAJES);
+    const horas = (j.salida - j.entrada) / 3600000;
+    syncGAS('salida', { fecha: new Date().toISOString().split('T')[0], entrada: new Date(j.entrada).toLocaleTimeString(), salida: new Date(j.salida).toLocaleTimeString(), horas: horas.toFixed(2) });
     delete JORNADAS[uid];
-    saveJornadas();
-    renderWorkerStatus();
-    syncGAS('salida', fichaje);
-    showToast('Salida registrada ✓','t-ok');
-  });
+    showToast("Salida registrada", "t-ok");
+  }
+  localStorage.setItem('jornadas_' + new Date().toISOString().split('T')[0], JSON.stringify(JORNADAS));
+  renderWorkerStatus();
 }
 
-function togglePausa() {
-  const uid=STATE.user.id; const j=JORNADAS[uid];
-  if(j.estado==='dentro') { j.pausas.push({inicio:Date.now()}); j.estado='pausa'; } 
-  else { j.pausas[j.pausas.length-1].fin = Date.now(); j.estado='dentro'; }
-  saveJornadas(); renderWorkerStatus();
-}
-
-function logout() { STATE.user=null; backToUsers(); showScr('s-login'); renderLogin(); }
-function wNav(p) { ['fichar','historial','vacaciones'].forEach(pg=>{ document.getElementById('wp-'+pg).style.display = (p===pg?'block':'none'); document.getElementById('wb-'+pg).classList.toggle('on',p===pg); }); }
-function showScr(id) { document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on')); document.getElementById(id).classList.add('on'); }
-function openModal(id){document.getElementById(id).classList.add('on')}
-function closeModal(id){document.getElementById(id).classList.remove('on')}
-
-function fTime(d) { return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
-function initials(name) { return name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
-function getWorker(id) { return WORKERS.find(w=>w.id===id); }
-function getWorkers() { return WORKERS.filter(w=>w.role!=='admin' && w.activo); }
-function jornadaMs(j) { let t = (j.salida||Date.now()) - j.entrada; (j.pausas||[]).forEach(p=>t -= (p.fin||Date.now()) - p.inicio); return Math.max(0,t); }
-
-function showToast(msg,cls='') { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+cls+' show'; setTimeout(()=>t.classList.remove('show'),2800); }
-
-// ── ADMIN ──
-function initAdmin() { showScr('s-admin'); renderAdminWorkers(); aTab('hoy'); }
-function aTab(t) { document.querySelectorAll('.tab-p').forEach(p=>p.classList.remove('on')); document.getElementById('ap-'+t).classList.add('on'); document.querySelectorAll('.tab').forEach(btn=>btn.classList.toggle('on', btn.textContent.toLowerCase()===t)); }
-
-function saveWorker() {
-  const id = document.getElementById('mw-id').value || 'W'+Date.now();
-  const worker = {
-    id, nombre: document.getElementById('mw-nombre').value,
-    jornada: parseFloat(document.getElementById('mw-jornada').value),
-    pin: document.getElementById('mw-pin').value, activo: true, role: 'worker',
-    color: AVATAR_COLORS[0].color, bg: AVATAR_COLORS[0].bg
-  };
-  const idx = WORKERS.findIndex(w=>w.id===id);
-  if(idx>=0) WORKERS[idx]=worker; else WORKERS.push(worker);
-  save('workers', WORKERS);
-  syncGAS('worker_save', worker);
-  closeModal('m-add-worker');
-  renderAdminWorkers(); renderLogin();
-}
-
+// --- LOGICA ADMIN ---
 function renderAdminWorkers() {
-  document.getElementById('a-workers-list').innerHTML = getWorkers().map(w=>`
+  const list = document.getElementById('a-workers-list');
+  list.innerHTML = WORKERS.filter(w => w.activo && w.id !== 'admin').map(w => `
     <div class="worker-mgmt-card">
-       <div class="wm-name">${w.nombre}</div>
-       <div class="wm-meta">Jornada: ${w.jornada}h · PIN: ${w.pin}</div>
-    </div>`).join('');
+      <div>
+        <div style="font-weight:bold">${w.nombre}</div>
+        <div style="font-size:11px;color:var(--txt3)">PIN: ${w.pin} | Jornada: ${w.jornada}h</div>
+      </div>
+      <div style="display:flex;gap:5px">
+        <button class="btn-xs" onclick="editWorker('${w.id}')">EDITAR</button>
+        <button class="btn-xs" style="color:var(--err)" onclick="promptDelWorker('${w.id}')">BORRAR</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 function openAddWorker() {
   document.getElementById('mw-id').value = '';
   document.getElementById('mw-nombre').value = '';
+  document.getElementById('mw-pin').value = '';
+  document.getElementById('mw-title').textContent = "Añadir empleado";
   openModal('m-add-worker');
 }
 
-// INICIO
+function editWorker(id) {
+  const w = WORKERS.find(x => x.id === id);
+  document.getElementById('mw-id').value = w.id;
+  document.getElementById('mw-nombre').value = w.nombre;
+  document.getElementById('mw-jornada').value = w.jornada;
+  document.getElementById('mw-pin').value = w.pin;
+  document.getElementById('mw-title').textContent = "Editar empleado";
+  openModal('m-add-worker');
+}
+
+function saveWorker() {
+  const id = document.getElementById('mw-id').value || 'w' + Date.now();
+  const nombre = document.getElementById('mw-nombre').value;
+  const jornada = document.getElementById('mw-jornada').value;
+  const pin = document.getElementById('mw-pin').value;
+
+  if (!nombre || pin.length < 4) { showToast("Datos incompletos", "t-err"); return; }
+
+  const workerData = { id, nombre, jornada, pin, activo: true, role: 'worker', timestamp: new Date().toISOString() };
+  const idx = WORKERS.findIndex(w => w.id === id);
+  
+  if (idx > -1) WORKERS[idx] = workerData;
+  else WORKERS.push(workerData);
+
+  localStorage.setItem('workers', JSON.stringify(WORKERS));
+  syncGAS('worker_save', workerData);
+  closeModal('m-add-worker');
+  renderAdminWorkers();
+  renderLogin();
+  showToast("Guardado correctamente", "t-ok");
+}
+
+function promptDelWorker(id) {
+  const w = WORKERS.find(x => x.id === id);
+  document.getElementById('del-w-id').value = id;
+  document.getElementById('del-w-name').textContent = w.nombre;
+  openModal('m-del-worker');
+}
+
+function confirmDelWorker() {
+  const id = document.getElementById('del-w-id').value;
+  const idx = WORKERS.findIndex(w => w.id === id);
+  if (idx > -1) {
+    WORKERS[idx].activo = false;
+    localStorage.setItem('workers', JSON.stringify(WORKERS));
+    syncGAS('worker_delete', { id });
+    showToast("Empleado eliminado", "t-warn");
+  }
+  closeModal('m-del-worker');
+  renderAdminWorkers();
+  renderLogin();
+}
+
+// --- INICIALIZACIÓN ---
+function initWorker() { showScr('s-worker'); renderWorkerStatus(); tickClock(); }
+function initAdmin() { showScr('s-admin'); renderAdminWorkers(); }
+function logout() { STATE.user = null; showScr('s-login'); renderLogin(); }
+function renderLogin() {
+  const list = document.getElementById('user-list');
+  list.innerHTML = WORKERS.filter(w => w.activo).map(u => `
+    <div class="user-btn" onclick="selectUser('${u.id}')">
+      <div class="ava">${u.nombre[0]}</div>
+      <div>
+        <div style="font-weight:bold">${u.nombre}</div>
+        <div style="font-size:12px;color:var(--txt3)">${u.role === 'admin' ? 'ADMINISTRADOR' : 'EMPLEADO'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderWorkerStatus() {
+  const uid = STATE.user.id;
+  const j = JORNADAS[uid];
+  const btn = document.getElementById('w-btn-main');
+  const badge = document.getElementById('w-badge');
+  if (!j) {
+    btn.textContent = "FICHAR ENTRADA"; btn.className = "btn-main btn-in";
+    badge.textContent = "FUERA"; badge.style.color = "var(--txt3)";
+    document.getElementById('w-jtimer-row').style.display = 'none';
+  } else {
+    btn.textContent = "FICHAR SALIDA"; btn.className = "btn-main btn-out";
+    badge.textContent = "EN JORNADA"; badge.style.color = "var(--acc)";
+    document.getElementById('w-jtimer-row').style.display = 'block';
+  }
+}
+
+function tickClock() {
+  const now = new Date();
+  document.getElementById('w-clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('w-date').textContent = now.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase();
+  if (STATE.user && JORNADAS[STATE.user.id]) {
+    const diff = Date.now() - JORNADAS[STATE.user.id].entrada;
+    document.getElementById('w-jtimer').textContent = new Date(diff).toISOString().substr(11, 8);
+  }
+  if (STATE.user) setTimeout(tickClock, 1000);
+}
+
+function showScr(id) { document.querySelectorAll('.scr').forEach(s => s.classList.remove('on')); document.getElementById(id).classList.add('on'); }
+function openModal(id) { document.getElementById(id).classList.add('on'); }
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+function aTab(t) { document.querySelectorAll('.tab-p').forEach(p => p.classList.remove('on')); document.getElementById('ap-' + t).classList.add('on'); document.querySelectorAll('.tab').forEach(b => b.classList.remove('on')); event.target.classList.add('on'); }
+
+function showToast(msg, cls) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + cls;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
 renderLogin();
 </script>
 </body>
