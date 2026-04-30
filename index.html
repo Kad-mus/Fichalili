@@ -236,6 +236,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:16p
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .sc{background:linear-gradient(135deg,var(--s1),var(--s2));border:1px solid var(--bd);
   border-radius:var(--r-sm);padding:14px}
+.sc[style*="cursor"]:hover{border-color:var(--acc);background:linear-gradient(135deg,rgba(233,69,96,.08),rgba(233,69,96,.04));transform:scale(1.02);transition:all .15s}
 .sc-lbl{font-size:10px;font-weight:800;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
 .sc-val{font-family:var(--mono);font-size:26px;font-weight:500}
 .sc-sub{font-size:12px;color:var(--txt3);font-weight:600;margin-top:3px}
@@ -435,7 +436,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:16p
         <div class="sc"><div class="sc-lbl">Dentro ahora</div><div class="sc-val c-ok" id="a-dentro">0</div><div class="sc-sub">de <span id="a-total">0</span></div></div>
         <div class="sc"><div class="sc-lbl">Horas hoy</div><div class="sc-val" id="a-horas">0h</div><div class="sc-sub">equipo</div></div>
         <div class="sc"><div class="sc-lbl">Extra mes</div><div class="sc-val c-warn" id="a-extra">0h</div><div class="sc-sub">equipo</div></div>
-        <div class="sc"><div class="sc-lbl">Vac. pend.</div><div class="sc-val" id="a-vpend">0</div><div class="sc-sub">por aprobar</div></div>
+        <div class="sc" id="sc-vpend" style="cursor:pointer" title="Ver solicitudes pendientes"><div class="sc-lbl">Vac. pend.</div><div class="sc-val" id="a-vpend">0</div><div class="sc-sub">por aprobar</div></div>
       </div>
       <div class="sec-lbl">Tiempo real</div><div id="a-rt"></div>
     </div>
@@ -1383,6 +1384,7 @@ function wireEvents(){
   document.getElementById('tab-vacas').addEventListener('click',function(){setTab('vacas')});
   document.getElementById('tab-personal').addEventListener('click',function(){setTab('personal')});
   document.getElementById('tab-export').addEventListener('click',function(){setTab('export')});
+  document.getElementById('sc-vpend').addEventListener('click',function(){setTab('vacas')});
   document.getElementById('mes-prev-a').addEventListener('click',function(){S.aMes--;if(S.aMes<0){S.aMes=11;S.aAnyo--}renderAEq()});
   document.getElementById('mes-next-a').addEventListener('click',function(){S.aMes++;if(S.aMes>11){S.aMes=0;S.aAnyo++}renderAEq()});
   document.getElementById('btn-assign-vac').addEventListener('click',function(){openOv('m-vac-admin')});
