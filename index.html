@@ -621,13 +621,92 @@ function syncPull(done){
   setTimeout(function(){done()},5000);
 }
 
-// ── AUTH / PIN ──
+// ── AUTH / PIN + BIOMETRÍA ──
 var _cb=null,_usr=null,_pin='';
+
+// Claves localStorage por usuario
+function bioKey(uid){ return 'bio_v2_'+uid; }
+function hasBio(uid){ return !!localStorage.getItem(bioKey(uid)); }
+function saveBioId(uid,id){ localStorage.setItem(bioKey(uid),id); }
+
+// Comprobar si el dispositivo soporta autenticador de plataforma (Face ID / Huella)
+function canUseBio(cb){
+  if(!window.PublicKeyCredential){cb(false);return;}
+  PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+    .then(function(ok){cb(ok)})
+    .catch(function(){cb(false)});
+}
+
+// Registrar biometría tras PIN correcto (solo móvil + primera vez)
+function tryRegisterBio(user){
+  canUseBio(function(ok){
+    if(!ok||hasBio(user.id))return;
+    var uid=user.id;
+    var challenge=new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+    var userId=new TextEncoder().encode(uid);
+    if(userId.length>64)userId=userId.slice(0,64);
+    navigator.credentials.create({publicKey:{
+      challenge:challenge,
+      rp:{name:'Fichalili',id:location.hostname},
+      user:{id:userId,name:user.nombre,displayName:user.nombre},
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
+      timeout:30000
+    }}).then(function(cred){
+      if(cred){
+        var idB64=btoa(String.fromCharCode.apply(null,new Uint8Array(cred.rawId)));
+        saveBioId(uid,idB64);
+        showToast('🔐 Biometría activada','t-ok');
+      }
+    }).catch(function(e){
+      // El usuario canceló o no está disponible — no pasa nada
+      console.log('bio register:',e.name);
+    });
+  });
+}
+
+// Verificar biometría existente
+function tryVerifyBio(user,onSuccess,onFallback){
+  canUseBio(function(ok){
+    if(!ok||!hasBio(user.id)){onFallback();return;}
+    var challenge=new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+    navigator.credentials.get({publicKey:{
+      challenge:challenge,
+      timeout:30000,
+      userVerification:'required',
+      rpId:location.hostname
+    }}).then(function(cred){
+      if(cred){
+        // Verificado — ejecutar callback
+        var cb=_cb;_cb=null;_usr=null;
+        if(cb)cb();
+      } else {
+        onFallback();
+      }
+    }).catch(function(e){
+      // NotAllowedError = usuario canceló → fallback a PIN
+      // Otros errores → fallback a PIN también
+      console.log('bio verify:',e.name);
+      onFallback();
+    });
+  });
+}
 
 function requireBio(user,cb){
   _usr=user;_cb=cb;_pin='';
-  // Siempre mostramos el PIN — sin biometría WebAuthn para evitar problemas
-  showPIN(user.nombre);
+  // En móvil con biometría registrada, intentar primero
+  var isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(isMobile&&hasBio(user.id)){
+    showToast('🔐 Verifica tu identidad…','');
+    tryVerifyBio(user,
+      function(){ /* onSuccess — callback ya llamado dentro */ },
+      function(){ showPIN(user.nombre); } // onFallback
+    );
+  } else {
+    showPIN(user.nombre);
+  }
 }
 
 function showPIN(nombre){
@@ -721,6 +800,11 @@ function checkPIN(){
     var user=_usr,cb=_cb;
     _cb=null;_usr=null;_pin='';
     hidePIN();
+    // Intentar registrar biometría en móvil si aún no está registrada
+    var isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(isMobile&&user&&!hasBio(user.id)){
+      tryRegisterBio(user);
+    }
     if(cb)cb();
   } else {
     var eL=document.getElementById('pin-err');
