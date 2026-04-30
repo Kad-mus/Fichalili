@@ -957,10 +957,55 @@ function buildPinPad(){
 }
 
 
-function requireBio(user,cb){
+const isMobile=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+function bioKey(uid){return 'bio_cred_'+uid}
+function hasBioCred(uid){return !!localStorage.getItem(bioKey(uid))}
+function saveBioCred(uid,credId){localStorage.setItem(bioKey(uid),credId)}
+
+async function tryWebAuthnRegister(user){
+  if(!isMobile()||!window.PublicKeyCredential)return false;
+  try{
+    const avail=await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if(!avail)return false;
+    const challenge=crypto.getRandomValues(new Uint8Array(32));
+    const uid=new TextEncoder().encode(user.id).slice(0,64);
+    const cred=await navigator.credentials.create({publicKey:{
+      challenge,rp:{name:'Fichalili',id:location.hostname},
+      user:{id:uid,name:user.nombre,displayName:user.nombre},
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
+      timeout:30000,
+    }});
+    if(cred){saveBioCred(user.id,btoa(String.fromCharCode(...new Uint8Array(cred.rawId))));return true;}
+  }catch(e){console.log('WebAuthn register:',e.name);}
+  return false;
+}
+
+async function tryWebAuthnVerify(user){
+  if(!isMobile()||!window.PublicKeyCredential||!hasBioCred(user.id))return null;
+  try{
+    const challenge=crypto.getRandomValues(new Uint8Array(32));
+    const cred=await navigator.credentials.get({publicKey:{
+      challenge,timeout:30000,userVerification:'required',
+      rpId:location.hostname,
+    }});
+    return cred?true:null;
+  }catch(e){
+    if(e.name==='NotAllowedError')return false;
+    return null;
+  }
+}
+
+async function requireBio(user,cb){
   _bioUser=user;_bioCb=cb;
   STATE._pinValue='';
-  // Use standalone PIN modal (works from any screen)
+  if(isMobile()&&hasBioCred(user.id)){
+    showToast('🔐 Verificando identidad…','');
+    const result=await tryWebAuthnVerify(user);
+    if(result===true){_bioCb=null;cb();return;}
+    if(result===false){showToast('Autenticación cancelada','t-warn');_bioCb=null;return;}
+  }
   showPinModal(user.nombre);
 }
 
@@ -1037,8 +1082,14 @@ function updatePinModalDots(){
 function checkPinModal(){
   const correct=_bioUser?.pin||'1234';
   if(STATE._pinValue===correct){
+    const user=_bioUser;
     const cb=_bioCb;_bioCb=null;STATE._pinValue='';
     hidePinModal();
+    if(isMobile()&&!hasBioCred(user.id)){
+      tryWebAuthnRegister(user).then(ok=>{
+        if(ok)showToast('🔐 Huella/Face ID activado para próximos accesos','t-ok');
+      });
+    }
     if(cb)cb();
   }else{
     const err=document.getElementById('pmod-err');
@@ -1409,7 +1460,7 @@ function submitVacReq(){
   const fin=document.getElementById('vr-fin').value;
   const mot=document.getElementById('vr-mot').value.trim();
   if(!ini||!fin){showToast('Selecciona fechas','t-err');return;}
-  if(ini>fin){showToast('Fecha fin debe ser posterior','t-err');return;}
+  if(ini>fin){showToast('La fecha fin debe ser posterior','t-err');return;}
   const uid=STATE.user.id;
   const reqDates=vacDates({inicio:ini,fin:fin});
   const myExisting=new Set();
@@ -1418,15 +1469,59 @@ function submitVacReq(){
   if(selfConflict){showToast(`El ${selfConflict} ya está solicitado`,'t-err');return;}
   const blocked=otherBlockedDates(uid);
   const otherConflict=reqDates.find(d=>blocked.has(d));
-  if(otherConflict){showToast(`El ${otherConflict} está ocupado`,'t-err');return;}
-  const vac={id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot,estado:'pendiente',ts:new Date().toISOString()};
-  VACACIONES.push(vac);save('vacaciones',VACACIONES);
-  pushVacacion({...vac,nombre:STATE.user.nombre});
-  STATE.calSelStart=null;STATE.calSelEnd=null;
-  closeModal('m-vac-req');
-  showToast('✅ Solicitud enviada al admin','t-ok');
-  renderWorkerVacaciones();
+  if(otherConflict){showToast(`El ${otherConflict} está ocupado por otro empleado`,'t-err');return;}
+
+  // Build confirmation text
+  const dIni=new Date(ini+'T00:00:00');
+  const dFin=new Date(fin+'T00:00:00');
+  const sIni=dIni.toLocaleDateString('es-ES',{day:'numeric',month:'long'});
+  const sFin=dFin.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+  const dias=reqDates.length;
+  const textoFechas = ini===fin
+    ? `el día <strong>${sIni}</strong> (1 día)`
+    : `del <strong>${sIni}</strong> al <strong>${sFin}</strong> (${dias} días)`;
+  const textoMotivo = mot ? `<br><br>Motivo: <em>"${mot}"</em>` : '';
+
+  showConfirmVac(
+    `Has solicitado vacaciones ${textoFechas}.${textoMotivo}<br><br>¿Es correcto?`,
+    ()=>{
+      const vac={id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot,estado:'pendiente',ts:new Date().toISOString()};
+      VACACIONES.push(vac);save('vacaciones',VACACIONES);
+      pushVacacion({...vac,nombre:STATE.user.nombre});
+      STATE.calSelStart=null;STATE.calSelEnd=null;
+      closeModal('m-vac-req');
+      showToast('✅ Solicitud enviada al administrador','t-ok');
+      renderWorkerVacaciones();
+    }
+  );
 }
+
+function showConfirmVac(htmlMsg, onConfirm){
+  // Remove existing if any
+  const old=document.getElementById('confirm-overlay');
+  if(old)old.remove();
+  const div=document.createElement('div');
+  div.id='confirm-overlay';
+  div.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9997;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)';
+  div.innerHTML=`
+    <div style="background:linear-gradient(180deg,#1a1a2e,#0f0e17);border-radius:24px 24px 0 0;border-top:1px solid rgba(233,69,96,0.3);padding:1.75rem 1.5rem calc(1.75rem + env(safe-area-inset-bottom,0));width:100%;max-width:480px;animation:up .25s ease-out">
+      <div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 1.5rem"></div>
+      <div style="font-size:22px;text-align:center;margin-bottom:1rem">✈️</div>
+      <div style="font-size:16px;font-weight:600;color:var(--txt);line-height:1.7;text-align:center;margin-bottom:1.75rem">${htmlMsg}</div>
+      <div style="display:flex;gap:10px">
+        <button onclick="document.getElementById('confirm-overlay').remove()" style="flex:1;padding:15px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:14px;color:var(--txt3);font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;text-transform:uppercase">Cancelar</button>
+        <button id="confirm-yes-btn" style="flex:2;padding:15px;background:linear-gradient(135deg,#e94560,#f5a623);border:none;border-radius:14px;color:#fff;font-family:var(--sans);font-size:14px;font-weight:800;cursor:pointer;text-transform:uppercase;box-shadow:0 4px 16px rgba(233,69,96,0.4)">Sí, confirmar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(div);
+  document.getElementById('confirm-yes-btn').addEventListener('click',()=>{
+    div.remove();
+    onConfirm();
+  });
+}
+
+
 
 // ════════════════════════════════════════
 //  ADMIN
