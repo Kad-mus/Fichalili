@@ -569,10 +569,30 @@ var TODAY=fDate(new Date());
 function gw(id){return WORKERS.find(function(w){return w.id===id})}
 function gws(){return WORKERS.filter(function(w){return w.role!=='admin'&&w.activo})}
 function jMs(j){if(!j||!j.entrada)return 0;var f=j.salida||Date.now(),t=f-j.entrada;(j.pausas||[]).forEach(function(p){t-=(p.fin||Date.now())-p.inicio});return Math.max(0,t)}
-function vDates(v){var ds=[],d=new Date(v.inicio+'T00:00:00'),f=new Date(v.fin+'T00:00:00');while(d<=f){ds.push(fDate(new Date(d)));d.setDate(d.getDate()+1)}return ds}
+function vDates(v){var ds=[],d=safeDate(v.inicio),f=safeDate(v.fin);if(!d||!f)return ds;while(d<=f){ds.push(fDate(new Date(d)));d.setDate(d.getDate()+1)}return ds}
 function obDates(uid){var s=new Set();VACACIONES.filter(function(v){return v.userId!==uid&&v.estado==='aprobada'}).forEach(function(v){vDates(v).forEach(function(d){s.add(d)})});return s}
 function exMes(uid,mes,anyo){var jn=(gw(uid)&&gw(uid).jornada||JORNADA_DEF)*3600000;return FICHAJES.filter(function(f){var d=new Date(f.fecha);return f.userId===uid&&d.getMonth()===mes&&d.getFullYear()===anyo}).reduce(function(a,f){return a+Math.max(0,f.duracionMs-jn)},0)}
-function fmtR(ini,fin){var a=new Date(ini+'T00:00:00'),b=new Date(fin+'T00:00:00'),o={day:'numeric',month:'short'};return ini===fin?a.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):a.toLocaleDateString('es-ES',o)+' → '+b.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})}
+function normDate(s){
+  if(!s)return '';
+  var clean=String(s).trim().replace(/\//g,'-').split('T')[0].split(' ')[0];
+  var p=clean.split('-');
+  if(p.length===3)return p[0]+'-'+p[1].padStart(2,'0')+'-'+p[2].padStart(2,'0');
+  return clean;
+}
+function safeDate(s){
+  if(!s)return null;
+  var clean=normDate(s);
+  var dt=new Date(clean+'T12:00:00');
+  return isNaN(dt.getTime())?null:dt;
+}
+function fmtR(ini,fin){
+  var a=safeDate(ini),b=safeDate(fin);
+  if(!a||!b)return(ini||'?')+' → '+(fin||'?');
+  var o={day:'numeric',month:'short'};
+  return ini===fin
+    ?a.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})
+    :a.toLocaleDateString('es-ES',o)+' → '+b.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
+}
 
 // ── DATA ──
 var WORKERS=ld('workers',[{id:'admin',nombre:'Administrador',email:'',color:'#ff7eb6',bg:'rgba(255,126,182,.15)',jornada:8,role:'admin',activo:true,pin:'0000'}]);
@@ -609,7 +629,7 @@ function syncPull(done){
     }
     showLoader('Cargando vacaciones...');
     gasGet({accion:'vacaciones'},function(vr){
-      if(vr&&vr.vacaciones&&vr.vacaciones.length){VACACIONES=vr.vacaciones.map(function(v){return{id:v.ID||v.id,userId:v.USER_ID||v.userId,inicio:v.INICIO||v.inicio,fin:v.FIN||v.fin,motivo:v.MOTIVO||v.motivo||'',estado:(v.ESTADO||v.estado||'pendiente').toLowerCase(),ts:v.TIMESTAMP||v.ts||new Date().toISOString()}});sv('vacaciones',VACACIONES)}
+      if(vr&&vr.vacaciones&&vr.vacaciones.length){VACACIONES=vr.vacaciones.map(function(v){return{id:v.ID||v.id,userId:v.USER_ID||v.userId,inicio:normDate(v.INICIO||v.inicio),fin:normDate(v.FIN||v.fin),motivo:v.MOTIVO||v.motivo||'',estado:(v.ESTADO||v.estado||'pendiente').toLowerCase(),ts:v.TIMESTAMP||v.ts||new Date().toISOString()}});sv('vacaciones',VACACIONES)}
       showLoader('Cargando fichajes...');
       var n=new Date();
       gasGet({accion:'fichajes',mes:n.getMonth(),anyo:n.getFullYear()},function(fr){
