@@ -645,7 +645,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:17p
 //  CONFIGURACIÓN
 // ════════════════════════════════════════
 const CFG = {
-  GAS_URL: '',          // Rellenar con URL de Google Apps Script
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyy7wlpPoN-PwsBW_5JoO7DIqus6W0Erun7nUbcimD8aL3wTjqDrp06af4pPPZBJDPB/exec',
   EMPRESA: 'Mi Empresa',
   JORNADA_DEFAULT: 8,
 };
@@ -663,23 +663,174 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 const DIAS_S = ['L','M','X','J','V','S','D'];
 
 // ════════════════════════════════════════
-//  ALMACENAMIENTO
+//  ALMACENAMIENTO + SYNC GAS
 // ════════════════════════════════════════
 function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } }
 function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
 
-// workers: [{id, nombre, email, color, bg, jornada, role, activo}]
+// workers: [{id, nombre, email, color, bg, jornada, role, activo, pin}]
 let WORKERS = load('workers', [
   { id:'admin', nombre:'Administrador', email:'', color:'#ff7eb6', bg:'rgba(255,126,182,0.12)', jornada:8, role:'admin', activo:true, pin:'0000' },
 ]);
 let FICHAJES = load('fichajes', []);
 let VACACIONES = load('vacaciones', []);
-let JORNADAS = {};   // in-memory daily state
+let JORNADAS = {};
 const TODAY = fDate(new Date());
 
 function loadJornadas() { JORNADAS = load('jornadas_' + TODAY, {}); }
 function saveJornadas() { save('jornadas_' + TODAY, JORNADAS); }
 loadJornadas();
+
+// ── GAS fetch helpers ──
+async function gasGet(params) {
+  if (!CFG.GAS_URL) return null;
+  try {
+    const qs = new URLSearchParams(params).toString();
+    const r = await fetch(CFG.GAS_URL + '?' + qs);
+    const d = await r.json();
+    return d.ok ? d : null;
+  } catch(e) { return null; }
+}
+
+async function gasPost(body) {
+  if (!CFG.GAS_URL) return null;
+  try {
+    const r = await fetch(CFG.GAS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+// ── Pantalla de carga ──
+function showLoader(msg) {
+  let el = document.getElementById('app-loader');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'app-loader';
+    el.style.cssText = `position:fixed;inset:0;background:var(--bg);z-index:99999;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem`;
+    el.innerHTML = `
+      <div style="font-family:var(--mono);font-size:24px;color:var(--acc);letter-spacing:.2em">FICHALILI</div>
+      <div style="width:48px;height:48px;border:2px solid var(--bd);border-top-color:var(--acc);border-radius:50%;animation:spin360 .8s linear infinite"></div>
+      <div id="loader-msg" style="font-family:var(--mono);font-size:12px;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase"></div>
+      <style>@keyframes spin360{to{transform:rotate(360deg)}}</style>
+    `;
+    document.body.appendChild(el);
+  }
+  document.getElementById('loader-msg').textContent = msg || 'Cargando...';
+}
+
+function hideLoader() {
+  const el = document.getElementById('app-loader');
+  if (el) { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }
+}
+
+// ── Sincronización inicial (pull desde GAS) ──
+async function syncPull() {
+  if (!CFG.GAS_URL) return;
+  showLoader('Conectando con el servidor...');
+
+  try {
+    // 1. Workers
+    showLoader('Cargando empleados...');
+    const wRes = await gasGet({ accion: 'workers' });
+    if (wRes?.workers?.length) {
+      // Merge: mantener admin local si no viene del servidor
+      const gasWorkers = wRes.workers.map(w => ({
+        id: w.ID || w.id,
+        nombre: w.NOMBRE || w.nombre,
+        email: w.EMAIL || w.email || '',
+        color: w.COLOR || w.color || '#c6f135',
+        bg: w.BG || w.bg || 'rgba(198,241,53,0.12)',
+        jornada: parseFloat(w.JORNADA || w.jornada) || 8,
+        role: w.ROLE || w.role || 'worker',
+        activo: (w.ACTIVO ?? w.activo) !== false && (w.ACTIVO ?? w.activo) !== 'false',
+        pin: w.PIN || w.pin || '1234',
+      }));
+      // Siempre conservar el admin local (tiene el PIN local)
+      const localAdmin = WORKERS.find(w => w.role === 'admin');
+      const merged = gasWorkers.filter(w => w.role !== 'admin');
+      if (localAdmin) merged.unshift(localAdmin);
+      WORKERS = merged;
+      save('workers', WORKERS);
+    }
+
+    // 2. Vacaciones
+    showLoader('Cargando vacaciones...');
+    const vRes = await gasGet({ accion: 'vacaciones' });
+    if (vRes?.vacaciones?.length) {
+      VACACIONES = vRes.vacaciones.map(v => ({
+        id: v.ID || v.id,
+        userId: v.USER_ID || v.userId,
+        inicio: v.INICIO || v.inicio,
+        fin: v.FIN || v.fin,
+        motivo: v.MOTIVO || v.motivo || '',
+        estado: (v.ESTADO || v.estado || 'pendiente').toLowerCase(),
+        ts: v.TIMESTAMP || v.ts || new Date().toISOString(),
+        byAdmin: v.BY_ADMIN === true || v.BY_ADMIN === 'true' || v.byAdmin || false,
+      }));
+      save('vacaciones', VACACIONES);
+    }
+
+    // 3. Fichajes del mes actual y anterior (no cargar todo)
+    showLoader('Cargando fichajes...');
+    const now = new Date();
+    const mes = now.getMonth(), anyo = now.getFullYear();
+    const fRes = await gasGet({ accion: 'fichajes', mes, anyo });
+    if (fRes?.fichajes?.length) {
+      // Merge: no sobreescribir fichajes del día de hoy (pueden estar en curso)
+      const gasF = fRes.fichajes.map(f => ({
+        id: f.ID || f.id,
+        userId: f.USER_ID || f.userId,
+        fecha: f.FECHA || f.fecha,
+        entrada: f.ENTRADA || f.entrada,
+        salida: f.SALIDA || f.salida,
+        horas: parseFloat(f.HORAS_TOTAL || f.horas) || 0,
+        duracionMs: parseFloat(f.HORAS_TOTAL || f.horas) * 3600000 || 0,
+        horasExtra: parseFloat(f.HORAS_EXTRA || f.horasExtra) || 0,
+        pausas: parseInt(f.PAUSAS || f.pausas) || 0,
+      }));
+      // Mantener fichajes locales de hoy, reemplazar el resto
+      const localHoy = FICHAJES.filter(f => f.fecha === TODAY);
+      const gasOtros = gasF.filter(f => f.fecha !== TODAY);
+      // Merge sin duplicados por id
+      const ids = new Set([...localHoy.map(f=>f.id), ...gasOtros.map(f=>f.id)]);
+      FICHAJES = [...localHoy, ...gasOtros.filter(f => !localHoy.find(lf=>lf.id===f.id))];
+      save('fichajes', FICHAJES);
+    }
+
+  } catch(e) {
+    console.warn('Error sync pull:', e);
+  }
+}
+
+// ── Push: enviar cambio puntual a GAS ──
+async function syncGAS(tipo, extra={}) {
+  if (!CFG.GAS_URL) return;
+  const body = { tipo, userId: STATE.user?.id, nombre: STATE.user?.nombre, timestamp: new Date().toISOString(), ...extra };
+  gasPost(body); // fire and forget
+}
+
+// ── Push worker a GAS ──
+async function pushWorker(w) {
+  if (!CFG.GAS_URL) return;
+  gasPost({ tipo:'worker_save', ...w });
+}
+
+// ── Push vacacion a GAS ──
+async function pushVacacion(v) {
+  if (!CFG.GAS_URL) return;
+  gasPost({ tipo:'vac_request', ...v });
+}
+
+// ── Push actualización estado vacacion ──
+async function pushVacUpdate(id, estado) {
+  if (!CFG.GAS_URL) return;
+  gasPost({ tipo:'vac_update', id, estado });
+}
 
 // ════════════════════════════════════════
 //  UTILS
@@ -981,19 +1132,25 @@ function doSalida() {
     const durMs = jornadaMs(j);
     const w = getWorker(uid);
     const jNorm = (w?.jornada||CFG.JORNADA_DEFAULT)*3600000;
-    FICHAJES.push({
+    const fichaje = {
       id: Date.now()+'', userId:uid, fecha:TODAY,
       entrada:fTime(new Date(j.entrada)), salida:fTime(new Date(j.salida)),
       duracionMs:durMs, horas:+(durMs/3600000).toFixed(2),
       horasExtra:+Math.max(0,(durMs-jNorm)/3600000).toFixed(2), pausas:j.pausas.length
-    });
+    };
+    FICHAJES.push(fichaje);
     save('fichajes',FICHAJES);
     saveJornadas();
     clearInterval(STATE._jornadaInt);
     renderWorkerStatus();
     renderWorkerHistorial();
     showToast(`Salida: ${msToH(durMs)} registradas ✓`,'t-ok');
-    syncGAS('salida',{durMs});
+    // Push completo a GAS
+    syncGAS('salida', {
+      fecha: TODAY, entrada: fichaje.entrada, salida: fichaje.salida,
+      horas: fichaje.horas, horasExtra: fichaje.horasExtra,
+      duracionMs: durMs, pausas: fichaje.pausas
+    });
   });
 }
 
@@ -1144,8 +1301,10 @@ function submitVacReq() {
   const blocked=otherBlockedDates(uid);
   const otherConflict=reqDates.find(d=>blocked.has(d));
   if(otherConflict){showToast(`El ${otherConflict} está ocupado por otro empleado`,'t-err');return;}
-  VACACIONES.push({id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot,estado:'pendiente',ts:new Date().toISOString()});
+  const vac = {id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot,estado:'pendiente',ts:new Date().toISOString()};
+  VACACIONES.push(vac);
   save('vacaciones',VACACIONES);
+  pushVacacion({...vac, nombre: STATE.user.nombre});
   closeModal('m-vac-req');
   showToast('Solicitud enviada al administrador ✓','t-ok');
   document.getElementById('vr-ini').value='';
@@ -1266,6 +1425,7 @@ function manageVac(id, estado) {
   v.estado=estado;
   v.gestionadoTs=new Date().toISOString();
   save('vacaciones',VACACIONES);
+  pushVacUpdate(id, estado);
   // Guardar notificación pendiente para el empleado
   const notifs=load('notifs_'+v.userId,[]);
   notifs.push({id:Date.now()+'',vacId:id,estado,inicio:v.inicio,fin:v.fin,motivo:v.motivo,ts:new Date().toISOString(),leida:false});
@@ -1282,8 +1442,11 @@ function adminAssignVac() {
   const mot=document.getElementById('va-mot').value.trim();
   if(!uid||!ini||!fin){showToast('Rellena todos los campos','t-err');return;}
   if(ini>fin){showToast('Fecha fin debe ser posterior','t-err');return;}
-  VACACIONES.push({id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot||'Vacaciones',estado:'aprobada',ts:new Date().toISOString(),byAdmin:true});
+  const vac={id:Date.now()+'',userId:uid,inicio:ini,fin:fin,motivo:mot||'Vacaciones',estado:'aprobada',ts:new Date().toISOString(),byAdmin:true};
+  VACACIONES.push(vac);
   save('vacaciones',VACACIONES);
+  const w=getWorker(uid);
+  pushVacacion({...vac, nombre: w?.nombre||uid});
   closeModal('m-vac-admin');
   renderAdminVacas();
   showToast('Vacaciones asignadas y aprobadas ✓','t-ok');
@@ -1360,13 +1523,16 @@ function saveWorker() {
   const pin=document.getElementById('mw-pin').value.replace(/\D/g,'').slice(0,4) || '1234';
   if(!nombre){showToast('El nombre es obligatorio','t-err');return;}
   const col=AVATAR_COLORS[STATE.mwColorSel];
+  let worker;
   if(id) {
-    const w=getWorker(id);
-    if(w){ w.nombre=nombre; w.email=email; w.jornada=jornada; w.pin=pin; w.color=col.color; w.bg=col.bg; }
+    worker=getWorker(id);
+    if(worker){ worker.nombre=nombre; worker.email=email; worker.jornada=jornada; worker.pin=pin; worker.color=col.color; worker.bg=col.bg; }
   } else {
-    WORKERS.push({id:'w'+Date.now(), nombre, email, color:col.color, bg:col.bg, jornada, pin, role:'worker', activo:true});
+    worker={id:'w'+Date.now(), nombre, email, color:col.color, bg:col.bg, jornada, pin, role:'worker', activo:true};
+    WORKERS.push(worker);
   }
   save('workers',WORKERS);
+  if(worker) pushWorker(worker);
   closeModal('m-add-worker');
   renderAdminWorkers();
   renderLogin();
@@ -1385,7 +1551,7 @@ function promptDelWorker(id) {
 function confirmDelWorker() {
   const id=document.getElementById('del-w-id').value;
   const w=getWorker(id);
-  if(w){w.activo=false;}
+  if(w){ w.activo=false; pushWorker(w); }
   save('workers',WORKERS);
   closeModal('m-del-worker');
   renderAdminWorkers();
@@ -1536,9 +1702,14 @@ function showNotifBanner(n) {
 }
 
 // ════════════════════════════════════════
-//  INIT
+//  INIT — arranque con sync
 // ════════════════════════════════════════
-renderLogin();
+(async () => {
+  showLoader('Iniciando Fichalili...');
+  await syncPull();
+  hideLoader();
+  renderLogin();
+})();
 </script>
 </body>
 </html>
