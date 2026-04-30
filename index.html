@@ -617,9 +617,11 @@ function showPinModal(nombre){
       <style>.pdot2{width:16px;height:16px;border-radius:50%;border:2px solid var(--txt3);transition:all .2s;display:inline-block}.pdot2.fill{background:var(--acc);border-color:var(--acc);transform:scale(1.15)}</style>`;
     const pad=m.querySelector('#pm-pad');
     [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n=>{
+      const val=n;
       const b=document.createElement('button');
-      b.textContent=n;b.style.cssText=`padding:15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:var(--txt);font-family:var(--sans);font-size:20px;font-weight:700;cursor:pointer;transition:all .15s;${n===''?'background:none;border-color:transparent;cursor:default':''}`;
-      if(n!=='')b.addEventListener('click',()=>{b.style.background='rgba(233,69,96,.25)';setTimeout(()=>b.style.background=n===''?'none':'rgba(255,255,255,.05)',150);n==='⌫'?pinDel():pinAdd(String(n));});
+      b.textContent=val;b.style.cssText=`padding:15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:var(--txt);font-family:var(--sans);font-size:20px;font-weight:700;cursor:pointer;transition:all .15s;${val===''?'background:none;border-color:transparent;cursor:default':''}`;
+      if(val!==''&&val!=='⌫')b.addEventListener('click',()=>{b.style.background='rgba(233,69,96,.25)';setTimeout(()=>b.style.background='rgba(255,255,255,.05)',150);pinAdd(String(val));});
+      if(val==='⌫')b.addEventListener('click',()=>pinDel());
       pad.appendChild(b);
     });
     document.body.appendChild(m);
@@ -634,7 +636,10 @@ const hidePinModal=()=>{const m=document.getElementById('pin-modal');if(m)m.styl
 const cancelPin=()=>{hidePinModal();_bioCb=null;_bioUser=null;_pinVal='';showToast('Cancelado','t-warn')};
 const pinAdd=d=>{if(_pinVal.length>=4)return;_pinVal+=d;updatePinDots();if(_pinVal.length===4)setTimeout(checkPin,130)};
 const pinDel=()=>{_pinVal=_pinVal.slice(0,-1);updatePinDots()};
-const updatePinDots=()=>document.querySelectorAll('.pdot2').forEach((d,i)=>d.classList.toggle('fill',i<_pinVal.length));
+const updatePinDots=()=>{
+  document.querySelectorAll('.pdot2').forEach((d,i)=>d.classList.toggle('fill',i<_pinVal.length));
+  document.querySelectorAll('#pin-dots .pdot').forEach((d,i)=>d.classList.toggle('fill',i<_pinVal.length));
+};
 
 function checkPin(){
   if(_pinVal===(_bioUser?.pin||'1234')){
@@ -663,8 +668,10 @@ function buildPinPad(){
   const pad=document.getElementById('pin-pad');if(!pad)return;
   pad.innerHTML='';
   [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n=>{
-    const b=document.createElement('button');b.className='pin-btn'+(n===''?' empty':'');b.textContent=n;
-    if(n!=='')b.addEventListener('click',()=>n==='⌫'?pinDel():pinAdd(String(n)));
+    const val=n;
+    const b=document.createElement('button');b.className='pin-btn'+(val===''?' empty':'');b.textContent=val;
+    if(val!==''&&val!=='⌫')b.addEventListener('click',()=>pinAdd(String(val)));
+    if(val==='⌫')b.addEventListener('click',()=>pinDel());
     pad.appendChild(b);
   });
 }
